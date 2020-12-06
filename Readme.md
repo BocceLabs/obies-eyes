@@ -1,12 +1,26 @@
 # OddballSports Vision
 
-todo
+We're building technology for games and sports using Computer Vision and Software for Scoring, Statistics, and Production Video.
 
 ## What is OddballSports.tv
 
 ![Oddball](https://assets-global.website-files.com/5e8b9f896b49748cc2267b42/5ebaf606ad305715794d64c1_ODD-LogoPrim.png)
 
-todo
+Quoted from our website:
+
+>Where you can set records without setting down your drink.
+>Oddball’s sports are a little off-center, leaving room in the spotlight for the community.
+>Most of these sports are old-old, but their histories have been largely buried or unwritten. Oddball Sports is where the legends will be made and remembered.
+
+We do Live Streams | Articles | Podcasts | Weird Stuff
+
+We play bocce, shuffleboard, croquet, pingpong, kendama, skeeball, wiffleball, axethrowing, minigolf, yardgames.
+
+Find us online:
+
+* [OddballSports.tv](https://oddballsports.tv)
+* Follow us on [Instagram](https://www.instagram.com/oddball_sports/)
+* Like us on [Facebook](https://www.facebook.com/oddballsportstv)
 
 ## Who is Obie?
 
@@ -16,16 +30,13 @@ Obie is OddballSports' cute little mascot with two eyes.  Our application is cal
 
 # Oddball Sports Vision Overview
 
-Also known as (aka): Obie's Eyes
+Also known as (aka): Obie's Eyes.
+
+Obie is getting an upgrade with cameras. We're building technology for games and sports using Computer Vision and Software for Scoring, Statistics, and Production Video.
 
 todo
 
 ## Would you like to contribute?
-
-Find us online:
-
-* https://oddballsports.tv
-* https://americanbocceco.com
 
 Send an email to the following people:
 
@@ -37,7 +48,7 @@ Send an email to the following people:
 
 Please beware of the open source package licenses in addition to our license.
 
-Apachei License 2.0
+For now, our software follows the **Apache License 2.0**.  Refer to the `LICENSE` file in the project.
 
 ## Pre-requisites
 
@@ -56,14 +67,13 @@ $ pip install -r requirements.txt
 
 ```
 $ workon obie
-$ python obie_eyes.py
+$ python obies_eyes.py
 ```
 
-# Credits
+# Software Credits
 
 A heartfelt thanks to the following projects and resources:
 
-* [OddballSports.tv](https://oddballsports.tv)
 * [Jeff Bass' `imagezmq` application](https://github.com/jeffbass/imagezmq)
 * [Adrian Rosebrock's `imutils` application](https://github.com/jrosebr1/imutils)
 * [Adrian Rosebrock's `color_histograms` example in the PyImageSearch Gurus course](https://gurus.pyimagesearch.com/lessons/color-histograms/)
