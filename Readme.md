@@ -4,11 +4,15 @@ todo
 
 ## What is OddballSports.tv
 
+![Oddball](https://assets-global.website-files.com/5e8b9f896b49748cc2267b42/5ebaf606ad305715794d64c1_ODD-LogoPrim.png)
+
 todo
 
 ## Who is Obie?
 
-Obie is OddballSports' cute little mascot with two eyes.  Our application is called "obie_eyes" because OddballSports courts are getting eyes in the form of cameras.
+![Obie](https://assets-global.website-files.com/5e8b9f896b49748cc2267b42/5ebc02869ab74f90ec34d7a7_ODD-Mark-BlackWhite.png)
+
+Obie is OddballSports' cute little mascot with two eyes.  Our application is called "obies-eyes" because OddballSports courts are getting eyes in the form of cameras.
 
 # Oddball Sports Vision Overview
 
