@@ -1,0 +1,152 @@
+
+[INFO] Creating a venue...
+Venue: Bridge 410
+
+[INFO] Creating three courts...
+Court: Fence (north-south)
+Court: Middle (north-south)
+Court: Sidewalk (north-south)
+
+[INFO] Checking to see if the venue has courts...
+Venue: Bridge 410: Courts: Fence, Middle, Sidewalk
+
+[INFO] Creating two cameras and assigning them to a court...
+USBCamera: SidewalkA
+USBCamera: SidewalkB
+
+[INFO] Grabbing camera frames to ensure they are working...
+.....success
+
+[INFO] Creating four players...
+Player: David Hoffman
+Player: Elizabeth Hoffman
+Player: Matt David
+Player: Alex Gara
+
+[INFO] Creating two teams and adding players...
+Team: J.K. Rollin'
+Team: Bocce Kings
+
+[INFO] Setting up a death match...
+Game: Umpire: Alicia, home=Team: Bocce Kings vs. away=Team: J.K. Rollin'
+
+[INFO] Starting the game...
+
+[INFO] Game is being played at Venue: Bridge 410 on Court: Sidewalk (north-south)...
+[INFO] Game is started; clock is set...
+
+Player: Matt David threw the pallino. Throw is valid.
+Following the pallino
+Player: Alex Gara(blue)	threw a bocce.	Throw is valid.	Team: Bocce Kings	is in with points=1.	Team: Bocce Kings	remaining balls=3
+The other team ALWAYS throws their first ball next
+Player: Elizabeth Hoffman(red)	threw a bocce.	Throw is valid.	Team: J.K. Rollin'	is in with points=1.	Team: J.K. Rollin'	remaining balls=3
+Player: Elizabeth Hoffman(red)	threw a bocce.	Throw is valid.	Team: J.K. Rollin'	is in with points=1.	Team: J.K. Rollin'	remaining balls=2
+Player: Matt David(blue)	threw a bocce.	Throw is valid.	Team: J.K. Rollin'	is in with points=1.	Team: Bocce Kings	remaining balls=2
+Player: Alex Gara(blue)	threw a bocce.	Throw is valid.	Team: J.K. Rollin'	is in with points=2.	Team: Bocce Kings	remaining balls=1
+Player: David Hoffman(red)	threw a bocce.	Throw is valid.	Team: J.K. Rollin'	is in with points=1.	Team: J.K. Rollin'	remaining balls=1
+Player: David Hoffman(red)	threw a bocce.	Throw is valid.	Team: Bocce Kings	is in with points=1.	Team: J.K. Rollin'	remaining balls=0
+Player: Alex Gara(blue)	threw a bocce.	Throw is valid.	Team: J.K. Rollin'	is in with points=1.	Team: Bocce Kings	remaining balls=0
+[INFO] frame winner is Team: J.K. Rollin' with points=1
+[SCORE] Team: J.K. Rollin'=1 leads Team: Bocce Kings=0
+
+Player: Elizabeth Hoffman threw the pallino. Throw is valid.
+Following the pallino
+Player: Elizabeth Hoffman(red)	threw a bocce.	Throw is valid.	Team: Bocce Kings	is in with points=0.	Team: J.K. Rollin'	remaining balls=3
+The other team ALWAYS throws their first ball next
+Player: Alex Gara(blue)	threw a bocce.	Throw is valid.	Team: J.K. Rollin'	is in with points=1.	Team: Bocce Kings	remaining balls=3
+Player: Matt David(blue)	threw a bocce.	Throw is valid.	Team: J.K. Rollin'	is in with points=1.	Team: Bocce Kings	remaining balls=2
+Player: Alex Gara(blue)	threw a bocce.	Throw is valid.	Team: Bocce Kings	is in with points=3.	Team: Bocce Kings	remaining balls=1
+Player: Alex Gara(blue)	threw a bocce.	Throw is valid.	Team: Bocce Kings	is in with points=3.	Team: Bocce Kings	remaining balls=0
+Player: David Hoffman(red)	threw a bocce.	Throw is valid.	Team: Bocce Kings	is in with points=4.	Team: J.K. Rollin'	remaining balls=2
+Player: David Hoffman(red)	threw a bocce.	Throw is valid.	Team: Bocce Kings	is in with points=1.	Team: J.K. Rollin'	remaining balls=1
+Player: Elizabeth Hoffman(red)	threw a bocce.	Throw is valid.	Team: Bocce Kings	is in with points=2.	Team: J.K. Rollin'	remaining balls=0
+[INFO] frame winner is Team: Bocce Kings with points=2
+[SCORE] Team: Bocce Kings=2 leads Team: J.K. Rollin'=1
+
+Player: Alex Gara threw the pallino. Throw is valid.
+Following the pallino
+Player: Matt David(blue)	threw a bocce.	Throw is valid.	Team: Bocce Kings	is in with points=1.	Team: Bocce Kings	remaining balls=3
+The other team ALWAYS throws their first ball next
+Player: Elizabeth Hoffman(red)	threw a bocce.	Throw is valid.	Team: J.K. Rollin'	is in with points=1.	Team: J.K. Rollin'	remaining balls=3
+Player: David Hoffman(red)	threw a bocce.	Throw is valid.	Team: J.K. Rollin'	is in with points=1.	Team: J.K. Rollin'	remaining balls=2
+Player: Matt David(blue)	threw a bocce.	Throw is valid.	Team: J.K. Rollin'	is in with points=1.	Team: Bocce Kings	remaining balls=2
+Player: David Hoffman(red)	threw a bocce.	Throw is valid.	Team: Bocce Kings	is in with points=2.	Team: J.K. Rollin'	remaining balls=1
+Player: Elizabeth Hoffman(red)	threw a bocce.	Throw is valid.	Team: Bocce Kings	is in with points=2.	Team: J.K. Rollin'	remaining balls=0
+Player: Alex Gara(blue)	threw a bocce.	Throw is valid.	Team: Bocce Kings	is in with points=3.	Team: Bocce Kings	remaining balls=1
+Player: Alex Gara(blue)	threw a bocce.	Throw is valid.	Team: Bocce Kings	is in with points=3.	Team: Bocce Kings	remaining balls=0
+[INFO] frame winner is Team: Bocce Kings with points=3
+[SCORE] Team: Bocce Kings=5 leads Team: J.K. Rollin'=1
+
+Player: Matt David threw the pallino. Throw is valid.
+Following the pallino
+Player: Matt David(blue)	threw a bocce.	Throw is valid.	Team: Bocce Kings	is in with points=1.	Team: Bocce Kings	remaining balls=3
+The other team ALWAYS throws their first ball next
+Player: Elizabeth Hoffman(red)	threw a bocce.	Throw is valid.	Team: Bocce Kings	is in with points=1.	Team: J.K. Rollin'	remaining balls=3
+Player: David Hoffman(red)	threw a bocce.	Throw is valid.	Team: Bocce Kings	is in with points=1.	Team: J.K. Rollin'	remaining balls=2
+Player: Elizabeth Hoffman(red)	threw a bocce.	Throw is valid.	Team: Bocce Kings	is in with points=1.	Team: J.K. Rollin'	remaining balls=1
+Player: David Hoffman(red)	threw a bocce.	Throw is valid.	Team: J.K. Rollin'	is in with points=3.	Team: J.K. Rollin'	remaining balls=0
+Player: Matt David(blue)	threw a bocce.	Throw is valid.	Team: Bocce Kings	is in with points=1.	Team: Bocce Kings	remaining balls=2
+Player: Alex Gara(blue)	threw a bocce.	Throw is valid.	Team: J.K. Rollin'	is in with points=2.	Team: Bocce Kings	remaining balls=1
+Player: Alex Gara(blue)	threw a bocce.	Throw is valid.	Team: Bocce Kings	is in with points=1.	Team: Bocce Kings	remaining balls=0
+[INFO] frame winner is Team: Bocce Kings with points=1
+[SCORE] Team: Bocce Kings=6 leads Team: J.K. Rollin'=1
+
+Player: Alex Gara threw the pallino. Throw is valid.
+Following the pallino
+Player: Alex Gara(blue)	threw a bocce.	Throw is valid.	Team: J.K. Rollin'	is in with points=0.	Team: Bocce Kings	remaining balls=3
+The other team ALWAYS throws their first ball next
+Player: David Hoffman(red)	threw a bocce.	Throw is valid.	Team: Bocce Kings	is in with points=1.	Team: J.K. Rollin'	remaining balls=3
+Player: Matt David(blue)	threw a bocce.	Throw is valid.	Team: J.K. Rollin'	is in with points=1.	Team: Bocce Kings	remaining balls=2
+Player: David Hoffman(red)	threw a bocce.	Throw is valid.	Team: J.K. Rollin'	is in with points=2.	Team: J.K. Rollin'	remaining balls=2
+Player: Alex Gara(blue)	threw a bocce.	Throw is valid.	Team: J.K. Rollin'	is in with points=1.	Team: Bocce Kings	remaining balls=1
+Player: Elizabeth Hoffman(red)	threw a bocce.	Throw is valid.	Team: Bocce Kings	is in with points=3.	Team: J.K. Rollin'	remaining balls=1
+Player: Matt David(blue)	threw a bocce.	Throw is valid.	Team: J.K. Rollin'	is in with points=1.	Team: Bocce Kings	remaining balls=0
+Player: Elizabeth Hoffman(red)	threw a bocce.	Throw is valid.	Team: Bocce Kings	is in with points=2.	Team: J.K. Rollin'	remaining balls=0
+[INFO] frame winner is Team: Bocce Kings with points=2
+[SCORE] Team: Bocce Kings=8 leads Team: J.K. Rollin'=1
+
+Player: Alex Gara threw the pallino. Throw is valid.
+Following the pallino
+Player: Alex Gara(blue)	threw a bocce.	Throw is valid.	Team: J.K. Rollin'	is in with points=0.	Team: Bocce Kings	remaining balls=3
+The other team ALWAYS throws their first ball next
+Player: David Hoffman(red)	threw a bocce.	Throw is valid.	Team: J.K. Rollin'	is in with points=1.	Team: J.K. Rollin'	remaining balls=3
+Player: Alex Gara(blue)	threw a bocce.	Throw is valid.	Team: Bocce Kings	is in with points=2.	Team: Bocce Kings	remaining balls=2
+Player: Matt David(blue)	threw a bocce.	Throw is valid.	Team: J.K. Rollin'	is in with points=1.	Team: Bocce Kings	remaining balls=1
+Player: Elizabeth Hoffman(red)	threw a bocce.	Throw is valid.	Team: J.K. Rollin'	is in with points=1.	Team: J.K. Rollin'	remaining balls=2
+Player: Elizabeth Hoffman(red)	threw a bocce.	Throw is valid.	Team: Bocce Kings	is in with points=2.	Team: J.K. Rollin'	remaining balls=1
+Player: Elizabeth Hoffman(red)	threw a bocce.	Throw is valid.	Team: Bocce Kings	is in with points=2.	Team: J.K. Rollin'	remaining balls=0
+Player: Matt David(blue)	threw a bocce.	Throw is valid.	Team: J.K. Rollin'	is in with points=2.	Team: Bocce Kings	remaining balls=0
+[INFO] frame winner is Team: J.K. Rollin' with points=2
+[SCORE] Team: Bocce Kings=8 leads Team: J.K. Rollin'=3
+
+Player: Elizabeth Hoffman threw the pallino. Throw is valid.
+Following the pallino
+Player: Elizabeth Hoffman(red)	threw a bocce.	Throw is valid.	Team: Bocce Kings	is in with points=0.	Team: J.K. Rollin'	remaining balls=3
+The other team ALWAYS throws their first ball next
+Player: Matt David(blue)	threw a bocce.	Throw is valid.	Team: J.K. Rollin'	is in with points=1.	Team: Bocce Kings	remaining balls=3
+Player: Elizabeth Hoffman(red)	threw a bocce.	Throw is valid.	Team: Bocce Kings	is in with points=1.	Team: J.K. Rollin'	remaining balls=2
+Player: Matt David(blue)	threw a bocce.	Throw is valid.	Team: J.K. Rollin'	is in with points=1.	Team: Bocce Kings	remaining balls=2
+Player: David Hoffman(red)	threw a bocce.	Throw is valid.	Team: J.K. Rollin'	is in with points=2.	Team: J.K. Rollin'	remaining balls=1
+Player: David Hoffman(red)	threw a bocce.	Throw is valid.	Team: J.K. Rollin'	is in with points=3.	Team: J.K. Rollin'	remaining balls=0
+Player: Matt David(blue)	threw a bocce.	Throw is valid.	Team: J.K. Rollin'	is in with points=4.	Team: Bocce Kings	remaining balls=1
+Player: Alex Gara(blue)	threw a bocce.	Throw is valid.	Team: J.K. Rollin'	is in with points=4.	Team: Bocce Kings	remaining balls=0
+[INFO] frame winner is Team: J.K. Rollin' with points=4
+[SCORE] Team: Bocce Kings=8 leads Team: J.K. Rollin'=7
+
+Player: Elizabeth Hoffman threw the pallino. Throw is valid.
+Following the pallino
+Player: Elizabeth Hoffman(red)	threw a bocce.	Throw is valid.	Team: J.K. Rollin'	is in with points=1.	Team: J.K. Rollin'	remaining balls=3
+The other team ALWAYS throws their first ball next
+Player: Alex Gara(blue)	threw a bocce.	Throw is valid.	Team: Bocce Kings	is in with points=1.	Team: Bocce Kings	remaining balls=3
+Player: Elizabeth Hoffman(red)	threw a bocce.	Throw is valid.	Team: Bocce Kings	is in with points=1.	Team: J.K. Rollin'	remaining balls=2
+Player: David Hoffman(red)	threw a bocce.	Throw is valid.	Team: J.K. Rollin'	is in with points=3.	Team: J.K. Rollin'	remaining balls=1
+Player: David Hoffman(red)	threw a bocce.	Throw is valid.	Team: Bocce Kings	is in with points=1.	Team: J.K. Rollin'	remaining balls=0
+Player: Matt David(blue)	threw a bocce.	Throw is valid.	Team: J.K. Rollin'	is in with points=3.	Team: Bocce Kings	remaining balls=2
+Player: Alex Gara(blue)	threw a bocce.	Throw is valid.	Team: Bocce Kings	is in with points=3.	Team: Bocce Kings	remaining balls=1
+Player: Matt David(blue)	threw a bocce.	Throw is valid.	Team: Bocce Kings	is in with points=4.	Team: Bocce Kings	remaining balls=0
+[INFO] frame winner is Team: Bocce Kings with points=4
+[SCORE] Team: Bocce Kings=12 leads Team: J.K. Rollin'=7
+
+[INFO] Game over. Time remaining: 8.47.
+[SCORE] Team: Bocce Kings=12 leads Team: J.K. Rollin'=7
+
