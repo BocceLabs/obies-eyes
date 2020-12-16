@@ -62,5 +62,5 @@ class Team:
 		return output[:-2]
 
 	def __str__(self):
-		return "{}: {}".format(self.__class__.__name__, self.teamName)
+		return self.teamName
 
