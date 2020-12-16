@@ -2,6 +2,7 @@
 from .frame import Frame
 import time
 
+
 class Timer():
     # todo implement timer
     def __init__(self, minutes):
@@ -20,7 +21,7 @@ class Timer():
         self.outOfTime = True
 
 class Game:
-    def __init__(self, teamHome, teamAway, umpire, playTo=12):
+    def __init__(self, teamHome, teamAway, umpire, playTo=12, gameMinutes=25):
         self.playTo = playTo
 
         self.teamHome = teamHome
@@ -38,7 +39,8 @@ class Game:
         self.teamAway_points = 0
         self.framepoints = 0
 
-        self.timer = None
+        # game timer
+        self.timeRemaining = None
 
         self.down_and_back = False
 
@@ -95,7 +97,7 @@ class Game:
         elif self.teamAwayScore >= self.playTo:
             self.gameWinner = self.teamAway
             self.end()
-        if self.timer.get_remaining() <= 0:
+        if not self.timeRemaining:
             self.end()
 
     def end_frame_and_set_score(self):
@@ -123,15 +125,14 @@ class Game:
                 self.teamAway, away, self.teamHome, home))
 
     def start(self):
-        # todo implement timer
-        self.timer = Timer(25.0)
-        self.timer.start()
+        self.timeRemaining = True
+
+    def time_is_up(self):
+        print("[INFO] out of time!")
+        self.end()
 
     def end(self):
-        # todo implement timer
-        self.timer.stop()
-        print("[INFO] Game over. Time remaining: {:.2f}.".format(
-            self.timer.get_remaining()))
+        print("[INFO] Game over.")
         self.print_score()
 
 

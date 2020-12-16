@@ -64,8 +64,13 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # movie timer
         #self.movie_thread = None
-        self.update_timer = QTimer()
-        self.update_timer.timeout.connect(self.update_movie)
+        self.GAME_MINUTES = 25
+        self.gameTimer = QTimer()
+        self.time_min_left = 0
+        self.time_sec_left = 0
+        self.game_time_ui_update()
+
+        # recording
         self.recording = False
         self.pushButton_record.clicked.connect(self.start_movie)
 
@@ -447,12 +452,6 @@ class MainWindow(QtWidgets.QMainWindow):
         print("[INFO] Game is started; clock is set...\n")
 
     def start_game(self):
-        self.initialize_game()
-        self.g.start()
-        status = "game in progress"
-        self.label_status.setText(status)
-        self.set_status_palette(status)
-
         # reset score info
         self.tableWidget_frame_score.setRowCount(0)
         self.lcdNumber_frame_score_teamHome.display(str(0))
@@ -461,6 +460,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.lcdNumber_game_score_teamAway.display(str(0))
         self.label_game_score_teamHome.setText(str("Home"))
         self.label_game_score_teamAway.setText(str("Away"))
+
+        # initialize the game
+        self.initialize_game()
+        self.g.start()
+        status = "game in progress"
+        self.label_status.setText(status)
+        self.set_status_palette(status)
+
+        # start timer
+        self.gameTimer.timeout.connect(self.time_tick)
+        self.gameTimer.start(60 * self.GAME_MINUTES)
+        self.time_min_left = self.GAME_MINUTES - 1
+        self.time_sec_left = 60
+
 
 
     def score_frame(self):
@@ -543,6 +556,31 @@ class MainWindow(QtWidgets.QMainWindow):
             self.label_game_check_away.repaint()
             self.label_game_check_home.clear()
 
+    def time_tick(self):
+        # subtract a second
+        self.time_sec_left -= 1
+
+        # if the seconds < 0, we need to account for minutes
+        if self.time_sec_left < 0:
+            # subtract a minute
+            self.time_min_left -= 1
+
+            # if there are no more minutes
+            if self.time_min_left < 0:
+                self.time_is_out = True
+                self.time_min_left = 0
+                self.time_sec_left = 0
+
+            # otherwise, the seconds are set to 59
+            else:
+                self.time_sec_left = 59
+
+        # update the timer on the UI
+        self.game_time_ui_update()
+
+    def game_time_ui_update(self):
+        self.lcdNumber_game_time_remaining_min.display(str(self.time_min_left).zfill(2))
+        self.lcdNumber_game_time_remaining_sec.display(str(self.time_sec_left).zfill(2))
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
