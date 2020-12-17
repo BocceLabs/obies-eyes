@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1161</width>
-    <height>600</height>
+    <width>1207</width>
+    <height>677</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -29,8 +29,8 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>1141</width>
-     <height>581</height>
+     <width>1181</width>
+     <height>651</height>
     </rect>
    </property>
    <property name="sizePolicy">
@@ -49,10 +49,10 @@
     <widget class="QTableWidget" name="tableWidget_frame_score">
      <property name="geometry">
       <rect>
-       <x>490</x>
+       <x>540</x>
        <y>20</y>
-       <width>571</width>
-       <height>211</height>
+       <width>621</width>
+       <height>271</height>
       </rect>
      </property>
      <property name="sizePolicy">
@@ -60,6 +60,15 @@
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <family>Luckiest Guy</family>
+       <pointsize>18</pointsize>
+      </font>
+     </property>
+     <property name="sizeAdjustPolicy">
+      <enum>QAbstractScrollArea::AdjustToContents</enum>
      </property>
      <property name="alternatingRowColors">
       <bool>true</bool>
@@ -77,7 +86,7 @@
       <bool>true</bool>
      </attribute>
      <attribute name="horizontalHeaderDefaultSectionSize">
-      <number>50</number>
+      <number>90</number>
      </attribute>
      <attribute name="horizontalHeaderStretchLastSection">
       <bool>true</bool>
@@ -85,7 +94,13 @@
      <attribute name="verticalHeaderVisible">
       <bool>false</bool>
      </attribute>
-     <attribute name="verticalHeaderStretchLastSection">
+     <attribute name="verticalHeaderMinimumSectionSize">
+      <number>35</number>
+     </attribute>
+     <attribute name="verticalHeaderDefaultSectionSize">
+      <number>35</number>
+     </attribute>
+     <attribute name="verticalHeaderShowSortIndicator" stdset="0">
       <bool>false</bool>
      </attribute>
      <column>
@@ -130,7 +145,7 @@
       <rect>
        <x>10</x>
        <y>10</y>
-       <width>471</width>
+       <width>521</width>
        <height>91</height>
       </rect>
      </property>
@@ -274,8 +289,8 @@
       <rect>
        <x>10</x>
        <y>100</y>
-       <width>471</width>
-       <height>61</height>
+       <width>521</width>
+       <height>91</height>
       </rect>
      </property>
      <property name="title">
@@ -284,7 +299,7 @@
      <property name="checkable">
       <bool>false</bool>
      </property>
-     <widget class="QCheckBox" name="checkBox_venue">
+     <widget class="QCheckBox" name="checkBox_annotation_venue">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -297,7 +312,7 @@
        <string>Venue</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="checkBox_team">
+     <widget class="QCheckBox" name="checkBox_annotation_team">
       <property name="geometry">
        <rect>
         <x>100</x>
@@ -310,7 +325,7 @@
        <string>Team</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="checkBox_player">
+     <widget class="QCheckBox" name="checkBox_annotation_player">
       <property name="geometry">
        <rect>
         <x>180</x>
@@ -323,7 +338,7 @@
        <string>Player</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="checkBox_balltrails">
+     <widget class="QCheckBox" name="checkBox_annotation_balltrails">
       <property name="geometry">
        <rect>
         <x>360</x>
@@ -336,7 +351,7 @@
        <string>Ball Trails</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="checkBox_score">
+     <widget class="QCheckBox" name="checkBox_annotation_score">
       <property name="geometry">
        <rect>
         <x>270</x>
@@ -349,13 +364,26 @@
        <string>Score</string>
       </property>
      </widget>
+     <widget class="QCheckBox" name="checkBox_annotation_time">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>60</y>
+        <width>86</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Time</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QGroupBox" name="groupBox_replay">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>460</y>
-       <width>461</width>
+       <y>530</y>
+       <width>521</width>
        <height>81</height>
       </rect>
      </property>
@@ -438,9 +466,9 @@
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>170</y>
-       <width>451</width>
-       <height>291</height>
+       <y>200</y>
+       <width>501</width>
+       <height>331</height>
       </rect>
      </property>
      <property name="text">
@@ -456,8 +484,8 @@
     <widget class="QPushButton" name="pushButton_record">
      <property name="geometry">
       <rect>
-       <x>500</x>
-       <y>481</y>
+       <x>530</x>
+       <y>541</y>
        <width>151</width>
        <height>51</height>
       </rect>
@@ -469,8 +497,8 @@
     <widget class="QPushButton" name="pushButton_score_frame">
      <property name="geometry">
       <rect>
-       <x>780</x>
-       <y>481</y>
+       <x>810</x>
+       <y>541</y>
        <width>131</width>
        <height>51</height>
       </rect>
@@ -482,8 +510,8 @@
     <widget class="QPushButton" name="pushButton_startGame">
      <property name="geometry">
       <rect>
-       <x>650</x>
-       <y>481</y>
+       <x>680</x>
+       <y>541</y>
        <width>131</width>
        <height>51</height>
       </rect>
@@ -495,8 +523,8 @@
     <widget class="QLabel" name="label_status">
      <property name="geometry">
       <rect>
-       <x>510</x>
-       <y>420</y>
+       <x>540</x>
+       <y>480</y>
        <width>611</width>
        <height>71</height>
       </rect>
@@ -519,8 +547,8 @@
     <widget class="QLabel" name="label_game_score_teamHome">
      <property name="geometry">
       <rect>
-       <x>500</x>
-       <y>290</y>
+       <x>530</x>
+       <y>350</y>
        <width>371</width>
        <height>41</height>
       </rect>
@@ -543,8 +571,8 @@
     <widget class="QLCDNumber" name="lcdNumber_game_score_teamHome">
      <property name="geometry">
       <rect>
-       <x>890</x>
-       <y>280</y>
+       <x>920</x>
+       <y>340</y>
        <width>71</width>
        <height>61</height>
       </rect>
@@ -556,8 +584,8 @@
     <widget class="QLabel" name="label_game_score_teamAway">
      <property name="geometry">
       <rect>
-       <x>510</x>
-       <y>350</y>
+       <x>540</x>
+       <y>410</y>
        <width>361</width>
        <height>41</height>
       </rect>
@@ -580,8 +608,8 @@
     <widget class="QLCDNumber" name="lcdNumber_game_score_teamAway">
      <property name="geometry">
       <rect>
-       <x>890</x>
-       <y>340</y>
+       <x>920</x>
+       <y>400</y>
        <width>71</width>
        <height>61</height>
       </rect>
@@ -593,8 +621,8 @@
     <widget class="QLabel" name="label_frame_check_home">
      <property name="geometry">
       <rect>
-       <x>960</x>
-       <y>280</y>
+       <x>990</x>
+       <y>340</y>
        <width>50</width>
        <height>50</height>
       </rect>
@@ -606,8 +634,8 @@
     <widget class="QLabel" name="label_frame_check_away">
      <property name="geometry">
       <rect>
-       <x>960</x>
-       <y>350</y>
+       <x>990</x>
+       <y>410</y>
        <width>50</width>
        <height>50</height>
       </rect>
@@ -619,8 +647,8 @@
     <widget class="QLabel" name="label_frame_winner_col">
      <property name="geometry">
       <rect>
-       <x>960</x>
-       <y>250</y>
+       <x>990</x>
+       <y>310</y>
        <width>101</width>
        <height>20</height>
       </rect>
@@ -632,8 +660,8 @@
     <widget class="QLabel" name="label_game_winner_col">
      <property name="geometry">
       <rect>
-       <x>1080</x>
-       <y>250</y>
+       <x>1110</x>
+       <y>310</y>
        <width>51</width>
        <height>20</height>
       </rect>
@@ -645,8 +673,8 @@
     <widget class="QLabel" name="label_game_check_away">
      <property name="geometry">
       <rect>
-       <x>1080</x>
-       <y>350</y>
+       <x>1110</x>
+       <y>410</y>
        <width>50</width>
        <height>50</height>
       </rect>
@@ -658,8 +686,8 @@
     <widget class="QLabel" name="label_game_check_home">
      <property name="geometry">
       <rect>
-       <x>1070</x>
-       <y>290</y>
+       <x>1100</x>
+       <y>350</y>
        <width>50</width>
        <height>50</height>
       </rect>
@@ -671,8 +699,8 @@
     <widget class="QLCDNumber" name="lcdNumber_frame_score_teamHome">
      <property name="geometry">
       <rect>
-       <x>1020</x>
-       <y>290</y>
+       <x>1050</x>
+       <y>350</y>
        <width>31</width>
        <height>31</height>
       </rect>
@@ -690,8 +718,8 @@
     <widget class="QLCDNumber" name="lcdNumber_frame_score_teamAway">
      <property name="geometry">
       <rect>
-       <x>1020</x>
-       <y>360</y>
+       <x>1050</x>
+       <y>420</y>
        <width>31</width>
        <height>31</height>
       </rect>
@@ -709,8 +737,8 @@
     <widget class="QLCDNumber" name="lcdNumber_game_time_remaining_sec">
      <property name="geometry">
       <rect>
-       <x>1050</x>
-       <y>470</y>
+       <x>1080</x>
+       <y>530</y>
        <width>81</width>
        <height>71</height>
       </rect>
@@ -816,8 +844,8 @@
     <widget class="QLCDNumber" name="lcdNumber_game_time_remaining_min">
      <property name="geometry">
       <rect>
-       <x>950</x>
-       <y>470</y>
+       <x>980</x>
+       <y>530</y>
        <width>81</width>
        <height>71</height>
       </rect>
@@ -923,8 +951,8 @@
     <widget class="QLabel" name="label_colon">
      <property name="geometry">
       <rect>
-       <x>1030</x>
-       <y>470</y>
+       <x>1060</x>
+       <y>530</y>
        <width>20</width>
        <height>61</height>
       </rect>
@@ -1377,7 +1405,7 @@ p, li { white-space: pre-wrap; }
       <string>Team Away</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_saveTeamNames">
+    <widget class="QPushButton" name="pushButton_save_config">
      <property name="geometry">
       <rect>
        <x>610</x>
@@ -1456,6 +1484,45 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Luckiest Guy'; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'.AppleSystemUIFont';&quot;&gt;playerB2&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="spinBox_game_minutes_setting">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>470</y>
+       <width>41</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="value">
+      <number>25</number>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_game_time">
+     <property name="geometry">
+      <rect>
+       <x>60</x>
+       <y>480</y>
+       <width>71</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Game Time</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="checkBox_down_back_setting">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>469</y>
+       <width>141</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Down/Back On</string>
      </property>
     </widget>
    </widget>

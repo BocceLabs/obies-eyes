@@ -23,6 +23,14 @@ from games.bocce.frame import Frame
 from games.bocce.game import Game
 from games.camera.camera import USBCamera, RTSPCamera, PubSubImageZMQCamera
 
+# video production imports (as A_____ accordingly)
+from video_production.annotations.score import Score as AScore
+from video_production.annotations.venue import Venue as AVenue
+from video_production.annotations.team import Team as ATeam
+from video_production.annotations.time import Time as ATime
+from video_production.annotations.player import Player as APlayer
+from video_production.annotations.balltrails import BallTrails as ABallrails
+
 import threading
 
 
@@ -48,7 +56,7 @@ class MainWindow(QtWidgets.QMainWindow):
         ### config tab ###
         self.tableWidget_cameras.clicked.connect(self.set_camera_source_data)
         self.initialize_tableWidget_cameras_checkedstate()
-        self.pushButton_saveTeamNames.clicked.connect(self.save_team_names)
+        self.pushButton_save_config.clicked.connect(self.save_config)
 
         ### court tab ###
         # each of the cameras are set up in the
@@ -63,8 +71,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.cam8, self.movie_thread_cam8 = None, None
 
         # movie timer
-        #self.movie_thread = None
-        self.GAME_MINUTES = 25
+        self.movie_thread = None
+        self.movie_thread_timer = QTimer()
+        self.movie_thread_timer.timeout.connect(self.update_movie)
+
+        # game timer and down/back setting
+        self.GAME_MINUTES = None
+        self.DOWN_BACK_ENABLED = None
         self.gameTimer = QTimer()
         self.time_min_left = 0
         self.time_sec_left = 0
@@ -82,6 +95,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.radioButton_cam5.clicked.connect(self.get_camera_source)
         self.radioButton_cam6.clicked.connect(self.get_camera_source)
         self.radioButton_cam7.clicked.connect(self.get_camera_source)
+
+        # annotations
+        self.initialize_annotations()
+        self.checkBox_annotation_venue.clicked.connect(self.annotation_change)
+        self.checkBox_annotation_team.clicked.connect(self.annotation_change)
+        self.checkBox_annotation_player.clicked.connect(self.annotation_change)
+        self.checkBox_annotation_score.clicked.connect(self.annotation_change)
+        self.checkBox_annotation_balltrails.clicked.connect(self.annotation_change)
+        self.checkBox_annotation_time.clicked.connect(self.annotation_change)
 
         # set the no camera image
         self.set_default_img()
@@ -226,7 +248,16 @@ class MainWindow(QtWidgets.QMainWindow):
     grabs frames from a camera and displays it continuously
     """
     def update_movie(self):
-        frame = cv2.cvtColor(self.get_camera_source()[0].last_frame, cv2.COLOR_BGR2RGB)
+        # grab the last frame from the selected camera source
+        frame = self.get_camera_source()[0].last_frame
+
+        # annotate the frame
+        frame = self.annotation_pipeline(frame)
+
+        # swap color channels for Qt GUI default
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+        # paint the label_camera frame area
         height, width, channel = frame.shape
         bytesPerLine = 3 * width
         qImg = QImage(frame.data, width, height,
@@ -249,16 +280,17 @@ class MainWindow(QtWidgets.QMainWindow):
             if t[1]:
                 setattr(self, "movie_thread_{}".format(t[0]), MovieThread(getattr(self, t[0])))
                 getattr(self, "movie_thread_{}".format(t[0])).start()
+
+
+
+                # todo only record if option set?
                 getattr(self, t[0]).start_recording()
+                # end todo
+
                 print("started: movie_thread_{}".format(t[0]))
 
+        self.movie_thread_timer.start(30)
         self.recording = True
-        self.update_timer.start(30)
-
-        # cam, movie_thread = self.get_camera_source()
-        # movie_thread = MovieThread(cam)
-        # movie_thread.start()
-        # self.update_timer.start(30)
 
     """
     stops all movie threads and sets recording to false
@@ -386,9 +418,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_camera.setPixmap(QPixmap(qImg))
         self.label_camera.repaint()
 
-    def save_team_names(self):
+    def save_config(self):
         self.teamHome_name = self.textEdit_teamHome.toPlainText()
         self.teamAway_name = self.textEdit_teamAway.toPlainText()
+        self.GAME_MINUTES = int(self.spinBox_game_minutes_setting.value())
+        self.DOWN_BACK_ENABLED = self.checkBox_down_back_setting.isChecked()
 
     def initialize_game(self):
         # create a venue
@@ -556,6 +590,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.label_game_check_away.repaint()
             self.label_game_check_home.clear()
 
+    """this method is called each time a second passes"""
     def time_tick(self):
         # subtract a second
         self.time_sec_left -= 1
@@ -578,9 +613,65 @@ class MainWindow(QtWidgets.QMainWindow):
         # update the timer on the UI
         self.game_time_ui_update()
 
+    """this method updates the time indicator on the GUI"""
     def game_time_ui_update(self):
         self.lcdNumber_game_time_remaining_min.display(str(self.time_min_left).zfill(2))
         self.lcdNumber_game_time_remaining_sec.display(str(self.time_sec_left).zfill(2))
+
+
+    def initialize_annotations(self):
+        self.annotation_score = AScore()
+        self.annotation_team = ATeam()
+        self.annotation_player = APlayer()
+        self.annotation_time = ATime()
+        self.annotation_balltrails = ABallrails()
+        self.annotation_venue = AVenue()
+
+    def annotation_pipeline(self, frame):
+        if self.g is None:
+            score = None
+        else:
+            score = (self.g.teamHomeScore, self.g.teamAwayScore)
+
+        frame = self.annotation_score.annotate(frame, score=score)
+        frame = self.annotation_team.annotate(frame)
+        frame = self.annotation_player.annotate(frame)
+        frame = self.annotation_time.annotate(frame)
+        frame = self.annotation_balltrails.annotate(frame)
+        frame = self.annotation_venue.annotate(frame)
+        return frame
+
+    def annotation_change(self):
+        # handle each annotation independently
+        if self.checkBox_annotation_venue.isChecked():
+            self.annotation_score.activate()
+        elif not self.checkBox_annotation_venue.isChecked():
+            self.annotation_score.deactivate()
+
+        if self.checkBox_annotation_team.isChecked():
+            self.annotation_team.activate()
+        elif not self.checkBox_annotation_team.isChecked():
+            self.annotation_team.deactivate()
+
+        if self.checkBox_annotation_player.isChecked():
+            self.annotation_player.activate()
+        elif not self.checkBox_annotation_player.isChecked():
+            self.annotation_player.deactivate()
+
+        if self.checkBox_annotation_score.isChecked():
+            self.annotation_score.activate()
+        elif not self.checkBox_annotation_score.isChecked():
+            self.annotation_score.deactivate()
+
+        if self.checkBox_annotation_balltrails.isChecked():
+            self.annotation_balltrails.activate()
+        elif not self.checkBox_annotation_balltrails.isChecked():
+            self.annotation_balltrails.deactivate()
+
+        if self.checkBox_annotation_time.isChecked():
+            self.annotation_time.activate()
+        elif not self.checkBox_annotation_time.isChecked():
+            self.annotation_time.deactivate()
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
