@@ -7,33 +7,43 @@ import threading
 import numpy as np
 import multiprocessing as mp
 from datetime import datetime
+import os
+
+VIDEO_DIR = "videos"
 
 class Camera:
-    def __init__(self, name, source):
+    def __init__(self, name, source, flip=False):
         self.name = name
         self.source = source
+        self.flip = flip
         self.recording = False
         self.fourcc = cv2.VideoWriter_fourcc(*"MP4V")
         self.writer = None
         self.h = None
         self.w = None
+        self.initialized = False
+
+        self.teams = "None-vs-None"
 
     def initialize(self):
         pass
 
     def get_frame(self):
+        self.last_frame = self._get_frame()
+
+    def _get_frame(self):
         pass
 
     def acquire_movie(self):
         while True:
             if self.recording:
                 if self.writer is None:
-                    (self.h, self.w) = self.get_frame().shape[:2]
-                    filename = self.name + "_" + \
-                        datetime.now().strftime("%Y-%m-%d_%H%M%S") + \
-                        ".mp4"
-                    self.writer = cv2.VideoWriter(filename, self.fourcc,
-                        25, (self.w, self.h), True)
+                    (self.h, self.w) = self._get_frame().shape[:2]
+                    filename = self.name + "_" + self.teams + "_" \
+                        + datetime.now().strftime("%Y-%m-%d_%H%M%S") + ".mp4"
+                    filepath = os.path.join(VIDEO_DIR, filename)
+                    self.writer = cv2.VideoWriter(filepath, self.fourcc, 25,
+                        (self.w, self.h), True)
                 self.writer.write(self.get_frame())
             else:
                 self.get_frame()
@@ -46,6 +56,9 @@ class Camera:
         self.writer.release()
         self.writer = None
 
+    def set_teams(self, teamHome, teamAway):
+        self.teams = teamHome + "-vs-" + teamAway
+
     def __str__(self):
         return "{}: {}".format(self.__class__.__name__, self.name, self.source)
 
@@ -54,57 +67,68 @@ class Camera:
 
 
 class USBCamera(Camera):
-    def __init__(self, name, source):
+    def __init__(self, name, source, flip=False):
         self.name = name
+        self.source = int(source)
+        self.flip = flip
         self.recording = False
         self.fourcc = cv2.VideoWriter_fourcc(*"MP4V")
         self.writer = None
         self.h = None
         self.w = None
 
-        self.source = int(source)
         self.width = 600
         self.last_frame = None
+        self.initialized = False
 
     def initialize(self):
-        self.cap = cv2.VideoCapture(self.source)
-        time.sleep(2)
-        self.get_frame()
+        if not self.initialized:
+            self.cap = cv2.VideoCapture(self.source)
+            time.sleep(2)
+            self.get_frame()
+            self.initialized = True
 
-    def get_frame(self):
+    def _get_frame(self):
         ret, frame = self.cap.read()
-        self.last_frame = imutils.resize(frame, width=self.width)
-        return self.last_frame
+        frame = imutils.resize(frame, width=self.width)
+        if self.flip:
+            frame = cv2.flip(frame, 1)
+        return frame
 
     def close_camera(self):
         self.cap.release()
+        self.initialized = False
 
 class RTSPCamera(Camera):
-    def __init__(self, name, source):
+    def __init__(self, name, source, flip=False):
         self.name = name
+        self.source = str(source)
+        self.flip = flip
         self.recording = False
         self.fourcc = cv2.VideoWriter_fourcc(*"MP4V")
         self.writer = None
         self.h = None
         self.w = None
 
-        self.source = str(source)
         self.receiver = None
         self.width = 600
         self.last_frame = None
+        self.initialized = False
 
     def initialize(self):
-        # use multiprocessing
-        self.parent_conn, child_conn = mp.Pipe()
-        self.is_open = True
-        self.p = mp.Process(target=self.rtsp_update, args=(child_conn, self.source, self.is_open))
+        if not self.initialized:
+            # use multiprocessing
+            self.parent_conn, child_conn = mp.Pipe()
+            self.is_open = True
+            self.p = mp.Process(target=self.rtsp_update, args=(child_conn, self.source, self.is_open))
 
-        # start the process
-        self.p.daemon = True
-        self.p.start()
-        self.get_frame()
+            # start the process
+            self.p.daemon = True
+            self.p.start()
+            self.get_frame()
+            self.initialized = True
 
-    def get_frame(self):
+    def _get_frame(self):
         # request a frame and send ack
         self.parent_conn.send(1)
         frame = self.parent_conn.recv()
@@ -112,8 +136,10 @@ class RTSPCamera(Camera):
 
         # convert to RGB and resize
         #frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        self.last_frame = imutils.resize(frame, width=self.width)
-        return self.last_frame
+        frame = imutils.resize(frame, width=self.width)
+        if self.flip:
+            frame = cv2.flip(frame, 1)
+        return frame
 
     def rtsp_update(self, conn, rtsp, is_open):
         cap = cv2.VideoCapture(rtsp)  # ,cv2.CAP_FFMPEG)
@@ -138,54 +164,74 @@ class RTSPCamera(Camera):
         self.is_open = False
 
 class ImageZMQCamera(Camera):
-    def __init__(self, name, source):
+    def __init__(self, name, source, flip=False):
         self.name = name
+        self.source = str(source).split(",")[0]
+        self.port = str(source).split(",")[1]
+        self.flip = flip
         self.recording = False
         self.fourcc = cv2.VideoWriter_fourcc(*"MP4V")
         self.writer = None
         self.h = None
         self.w = None
+        self.width = 600
 
-
-        self.image_hub = imagezmq.ImageHub()
+        self.image_hub = None
         self.last_frame = None
-        self.source = str(source)
+        self.initialized = False
 
-    def get_frame(self):
+    def initialize(self):
+        if not self.initialized:
+            self.image_hub = imagezmq.ImageHub('tcp://*:' + self.port)
+            frame = cv2.imread('views/ui/oddball.png')
+            self.last_frame = imutils.resize(frame, width=600)
+            self.initialized = True
+
+    def _get_frame(self):
         rpi_name, frame = self.image_hub.recv_image()
         #image = cv2.imdecode(np.frombuffer(jpg_buffer, dtype='uint8'), -1)
         self.image_hub.send_reply(b'OK')
-        self.last_frame = imutils.resize(frame, width=600)
-        return self.last_frame
+        frame = imutils.resize(frame, width=self.width)
+        if self.flip:
+            frame = cv2.flip(frame, 1)
+        return frame
 
     def close_camera(self):
         self.image_hub = None
 
 class PubSubImageZMQCamera(Camera):
-    def __init__(self, name, source):
+    def __init__(self, name, source, flip=False):
         self.name = name
         self.source = source
+        self.flip = flip
         self.recording = False
         self.fourcc = cv2.VideoWriter_fourcc(*"MP4V")
         self.writer = None
         self.h = None
         self.w = None
+        self.width = 600
 
         self.hostname = str(source)
         self.port = 5555
         self.receiver = None
         self.last_frame = None
 
-    def initialize(self):
-        self.receiver = VideoStreamSubscriber(self.hostname, self.port)
-        self.get_frame()
+        self.initialized = False
 
-    def get_frame(self):
+    def initialize(self):
+        if not self.initialized:
+            self.receiver = VideoStreamSubscriber(self.hostname, self.port)
+            self.get_frame()
+            self.initialized = True
+
+    def _get_frame(self):
         msg, frame = self.receiver.receive()
         image = cv2.imdecode(np.frombuffer(frame, dtype='uint8'), -1)
 
-        self.last_frame = imutils.resize(image, width=600)
-        return self.last_frame
+        frame = imutils.resize(image, width=self.width)
+        if self.flip:
+            frame = cv2.flip(frame, 1)
+        return frame
 
     def close_camera(self):
         self.receiver.close()
@@ -217,69 +263,3 @@ class VideoStreamSubscriber:
 
     def close(self):
         self._stop = True
-
-
-
-def get_balls(self, color=None):
-    blueLower = (57, 22, 21)
-    blueUpper = (154, 255, 163)
-
-    redLower = (129, 125, 88)
-    redUpper = (255, 255, 255)
-
-    yellowLower = (0, 17, 64)
-    yellowUpper = (54, 151, 255)
-
-    if color == "blue":
-        lower = blueLower
-        upper = blueUpper
-        color_circle = (255, 0, 0)
-    elif color == "red":
-        lower = redLower
-        upper = redUpper
-        color_circle = (0, 0, 255)
-    elif color == "yellow":
-        lower = yellowLower
-        upper = yellowUpper
-        color_circle = (255, 255, 0)
-    else:
-        return self.get_frame()
-
-
-    frame = self.get_frame()
-
-
-    hsv = cv2.cvtColor(frame, cv2.COLOR_RGB2HSV)
-
-
-
-    mask = cv2.inRange(hsv, lower, upper)
-    mask = cv2.erode(mask, None, iterations=2)
-    mask = cv2.dilate(mask, None, iterations=1)
-
-    # find contours in the mask and initialize the current
-    # (x, y) center of the ball
-    cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    cnts = imutils.grab_contours(cnts)
-    center = None
-
-    # only proceed if at least one contour was found
-    for cnt in cnts:
-        # find the largest contour in the mask, then use
-        # it to compute the minimum enclosing circle and
-        # centroid
-        #c = cnt.contourArea()
-
-        ((x, y), radius) = cv2.minEnclosingCircle(cnt)
-        M = cv2.moments(cnt)
-        center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
-        # only proceed if the radius meets a minimum size
-        if radius > 5 and radius < 20:
-            # draw the circle and centroid on the frame,
-            # then update the list of tracked points
-            cv2.circle(frame, (int(x), int(y)), int(radius),
-                       color_circle, 2)
-            #cv2.circle(frame, center, 2, (0, 0, 255), -1)
-
-    self.last_frame = frame
-    return self.last_frame

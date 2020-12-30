@@ -22,6 +22,22 @@ except:
 
 
 class Score(Annotation):
+    def __init__(self):
+        super(Score, self).__init__()
+
+        # load Luckiest Guy font
+        if unit_test:
+            self.font = ImageFont.truetype(
+                "../../fonts/Luckiest_Guy/LuckiestGuy-Regular.ttf",
+                size=220)
+
+        else:
+            self.font = ImageFont.truetype(
+                "fonts/Luckiest_Guy/LuckiestGuy-Regular.ttf",
+                size=220)
+
+
+
     def _annotate(self, frame, score=None, relFrameSize=0.20, *args, **kwargs):
         # force score to 0-0 if no score is passed or if it is unknown
         if score is None:
@@ -31,16 +47,6 @@ class Score(Annotation):
         teamHomeScore = str(score[0]).zfill(2)
         teamAwayScore = str(score[1]).zfill(2)
 
-        # load Luckiest Guy font
-        if unit_test:
-            font = ImageFont.truetype(
-                "../../fonts/Luckiest_Guy/LuckiestGuy-Regular.ttf",
-                size=220)
-        else:
-            font = ImageFont.truetype("fonts/Luckiest_Guy/LuckiestGuy-Regular.ttf",
-                                  size=220)
-
-        # load the empty scoreboard with PIL
         if unit_test:
             scoreboard = Image.open(
                 "../graphics/scoreboard.png")
@@ -59,26 +65,26 @@ class Score(Annotation):
         draw.text(xy=(x*xMult, y),
                   text=teamHomeScore[0],
                   align="center",
-                  font=font)
+                  font=self.font)
 
         # second digit
         draw.text(xy=(x*4.2, y),
                   text=teamHomeScore[1],
                   align="center",
-                  font=font)
+                  font=self.font)
 
         # third digit
         xMult = 8.25 if teamAwayScore[0] == "0" else 8.6
         draw.text(xy=(x*xMult, y),
                   text=teamAwayScore[0],
                   align="center",
-                  font=font)
+                  font=self.font)
 
         # fourth digit
         draw.text(xy=(x*12.3, y),
                   text=teamAwayScore[1],
                   align="center",
-                  font=font)
+                  font=self.font)
 
         # load the scoreboard into OpenCV format
         scoreboard = cv2.cvtColor(np.array(scoreboard), cv2.COLOR_RGBA2BGR)

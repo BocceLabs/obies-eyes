@@ -14,9 +14,9 @@ from scipy.spatial import distance as dist
 ap = argparse.ArgumentParser()
 ap.add_argument("-i", "--camera", default=0,
     help="camera ordinal")
-ap.add_argument("-m", "--minhsv", default="0,0,15",
+ap.add_argument("-m", "--minhsv", default="0,8,84",
     help="hsv comma delimited")
-ap.add_argument("-x", "--maxhsv", default="102,91,255",
+ap.add_argument("-x", "--maxhsv", default="225,92,255",
     help="hsv comma delimited")
 ap.add_argument("-k", "--clusters", type=int, default=3,
 	help="# of clusters to generate")
@@ -250,7 +250,7 @@ time.sleep(2.0)
 def wait():
 	while True:
 		_, frame = vs.read()
-		frame = imutils.resize(frame, width=1000)
+		frame = imutils.resize(frame, width=600)
 		text = "Press 's' to score the frame!"
 		cv2.putText(frame, text, (20, 20),
 					cv2.FONT_HERSHEY_SIMPLEX,
@@ -270,7 +270,7 @@ while True:
 	key_team = wait()
 
 	_, frame = vs.read()
-	frame = imutils.resize(frame, width=1000)
+	frame = imutils.resize(frame, width=600)
 
 	# cv2.imwrite("desk.png", frame)
 	# import sys

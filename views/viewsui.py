@@ -1,5 +1,7 @@
 import sys
+
 import os
+
 # add the parent directory (absolute, not relative) to the sys.path
 # (this makes the games package imports work)
 sys.path.append(os.path.abspath(os.pardir))
@@ -7,21 +9,19 @@ sys.path.append(os.path.abspath(os.pardir))
 import cv2
 import imutils
 from PyQt5 import QtCore, QtWidgets
-from PyQt5 import uic, QtGui
+from PyQt5 import uic
 from PyQt5.QtCore import QThread, QTimer
 from PyQt5.QtGui import QImage, QPixmap, QColor
 from PyQt5.QtWidgets import QTableWidgetItem
-from games.cv import helpers
+from games.bocce.cv import ballfinder
 
 # bocce imports
 from games.bocce.venue import Venue
 from games.bocce.court import Court
 from games.bocce.team import Team
 from games.bocce.person import Player, Umpire
-from games.bocce.throw import Throw
-from games.bocce.frame import Frame
 from games.bocce.game import Game
-from games.camera.camera import USBCamera, RTSPCamera, PubSubImageZMQCamera
+from games.camera.camera import USBCamera, RTSPCamera, PubSubImageZMQCamera, ImageZMQCamera
 
 # video production imports (as A_____ accordingly)
 from video_production.annotations.score import Score as AScore
@@ -29,10 +29,8 @@ from video_production.annotations.venue import Venue as AVenue
 from video_production.annotations.team import Team as ATeam
 from video_production.annotations.time import Time as ATime
 from video_production.annotations.player import Player as APlayer
-from video_production.annotations.balltrails import BallTrails as ABallrails
-
-import threading
-
+from video_production.annotations.balltrails import BallTrails as ABallTrails
+from video_production.annotations.vectors import Vectors as AVectors
 
 
 class MovieThread(QThread):
@@ -67,7 +65,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.cam4, self.movie_thread_cam4 = None, None
         self.cam5, self.movie_thread_cam5 = None, None
         self.cam6, self.movie_thread_cam6 = None, None
-        self.cam8, self.movie_thread_cam7 = None, None
+        self.cam7, self.movie_thread_cam7 = None, None
         self.cam8, self.movie_thread_cam8 = None, None
 
         # movie timer
@@ -95,15 +93,40 @@ class MainWindow(QtWidgets.QMainWindow):
         self.radioButton_cam5.clicked.connect(self.get_camera_source)
         self.radioButton_cam6.clicked.connect(self.get_camera_source)
         self.radioButton_cam7.clicked.connect(self.get_camera_source)
+        self.radioButton_cam8.clicked.connect(self.get_camera_source)
 
+        #############
         # annotations
+        self.annotation_score = None
+        self.annotation_team = None
+        self.annotation_player = None
+        self.annotation_time = None
+        self.annotation_balltrails = None
+        self.annotation_venue = None
+        self.annotation_vectors = None
+        # initialize annotations
         self.initialize_annotations()
-        self.checkBox_annotation_venue.clicked.connect(self.annotation_change)
-        self.checkBox_annotation_team.clicked.connect(self.annotation_change)
-        self.checkBox_annotation_player.clicked.connect(self.annotation_change)
-        self.checkBox_annotation_score.clicked.connect(self.annotation_change)
-        self.checkBox_annotation_balltrails.clicked.connect(self.annotation_change)
-        self.checkBox_annotation_time.clicked.connect(self.annotation_change)
+        # venue
+        self.checkBox_annotation_venue.stateChanged.connect(
+            lambda:self.annotation_change(self.annotation_venue, self.checkBox_annotation_venue))
+        # team
+        self.checkBox_annotation_team.clicked.connect(
+            lambda:self.annotation_change(self.annotation_team, self.checkBox_annotation_team))
+        # player
+        self.checkBox_annotation_player.clicked.connect(
+            lambda:self.annotation_change(self.annotation_player, self.checkBox_annotation_player))
+        # score
+        self.checkBox_annotation_score.clicked.connect(
+            lambda:self.annotation_change(self.annotation_score, self.checkBox_annotation_score))
+        # balltrails
+        self.checkBox_annotation_balltrails.clicked.connect(
+            lambda:self.annotation_change(self.annotation_balltrails, self.checkBox_annotation_balltrails))
+        # time
+        self.checkBox_annotation_time.clicked.connect(
+            lambda:self.annotation_change(self.annotation_time, self.checkBox_annotation_time))
+        # vectors
+        self.checkBox_annotation_vectors.clicked.connect(
+            lambda:self.annotation_change(self.annotation_vectors, self.checkBox_annotation_vectors))
 
         # set the no camera image
         self.set_default_img()
@@ -112,8 +135,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.g = None
         self.th = None
         self.toggleFrame = 1
-        self.pushButton_startGame.clicked.connect(self.start_game)
-        self.pushButton_score_frame.clicked.connect(self.score_frame)
+
+        # game controls (in future will be automated)
+        self.pushButton_start_game.setEnabled(False)
+        self.pushButton_start_frame.setEnabled(False)
+        self.pushButton_throw.setEnabled(False)
+        self.pushButton_end_frame.setEnabled(False)
+        self.pushButton_start_game.clicked.connect(self.start_game)
+        self.pushButton_start_frame.clicked.connect(self.start_frame)
+        self.pushButton_throw.clicked.connect(self.throw)
+        self.pushButton_end_frame.clicked.connect(self.end_frame)
 
     """
     sets the camera view to an oddball image residing on disk
@@ -175,10 +206,11 @@ class MainWindow(QtWidgets.QMainWindow):
             table_data.append(
                 (
                 "cam{}".format(r+1),
-                self.tableWidget_cameras.item(r, 0).checkState() == QtCore.Qt.Checked,
-                self.tableWidget_cameras.item(r, 1).text(),
-                self.tableWidget_cameras.item(r, 2).text(),
-                self.tableWidget_cameras.item(r, 3).text()
+                self.tableWidget_cameras.item(r, 0).checkState() == QtCore.Qt.Checked, # active?
+                self.tableWidget_cameras.item(r, 1).checkState() == QtCore.Qt.Checked, # flip?
+                self.tableWidget_cameras.item(r, 2).text(), # type
+                self.tableWidget_cameras.item(r, 3).text(), # source/hostname
+                self.tableWidget_cameras.item(r, 4).text() # label
                 )
             )
             r+=1
@@ -192,7 +224,8 @@ class MainWindow(QtWidgets.QMainWindow):
         rows = self.tableWidget_cameras.rowCount()
         r=0
         while r < rows:
-            self.tableWidget_cameras.item(r, 0).setCheckState(False)
+            self.tableWidget_cameras.item(r, 0).setCheckState(False),
+            self.tableWidget_cameras.item(r, 1).setCheckState(False)
             r+=1
 
     """
@@ -208,21 +241,28 @@ class MainWindow(QtWidgets.QMainWindow):
                 #self.radioButton_cam1.setText(t[4])
                 getattr(self, "radioButton_{}".format(t[0])).setEnabled(True)
                 getattr(self, "radioButton_{}".format(t[0])).setChecked(True)
-                getattr(self, "radioButton_{}".format(t[0])).setText(t[4])
+                getattr(self, "radioButton_{}".format(t[0])).setText(t[5])
 
                 # strip spaces from camera name for video filename purposes
-                cam_name = t[4].replace(" ", "")
+                cam_name = t[5].replace(" ", "")
 
                 # initialize the cameras based on type
-                if t[2] == "USBCamera":
-                    setattr(self, t[0], USBCamera(name=cam_name,
-                        source=int(t[3])))
-                elif t[2] == "RTSPCamera":
-                    setattr(self, t[0], RTSPCamera(name=cam_name,
-                        source=str(t[3])))
-                elif t[2] == "PubSubImageZMQCamera":
-                    setattr(self, t[0], PubSubImageZMQCamera(name=cam_name,
-                        source=str(t[3])))
+                if t[3] == "USBCamera":
+                    if getattr(self, "{}".format(t[0])) is None:
+                        setattr(self, t[0], USBCamera(name=cam_name,
+                            source=int(t[4]), flip=t[2]))
+                elif t[3] == "RTSPCamera":
+                    if getattr(self, "{}".format(t[0])) is None:
+                        setattr(self, t[0], RTSPCamera(name=cam_name,
+                            source=str(t[4]), flip=t[2]))
+                elif t[3] == "PubSubImageZMQCamera":
+                    if getattr(self, "{}".format(t[0])) is None:
+                        setattr(self, t[0], PubSubImageZMQCamera(name=cam_name,
+                            source=str(t[4]), flip=t[2]))
+                elif t[3] == "ImageZMQCamera":
+                    if getattr(self, "{}".format(t[0])) is None:
+                        setattr(self, t[0], ImageZMQCamera(name=cam_name,
+                            source=str(t[4]), flip=t[2]))
 
                 # initialize the camera
                 getattr(self, t[0]).initialize()
@@ -269,26 +309,25 @@ class MainWindow(QtWidgets.QMainWindow):
     starts movie threads for each active camera and sets the camera source to record
     """
     def start_movie(self):
+        # if we're already recording, stop recording
         if self.recording:
             self.stop_movie()
+            self.recording = False
             return
 
+        # otherwise, record all camera feeds
         table_data = self.get_tableWidget_cameras_data(self.tableWidget_cameras)
-
         for t in table_data:
             # if the checkbox in column 1 is checked, set it to record
             if t[1]:
                 setattr(self, "movie_thread_{}".format(t[0]), MovieThread(getattr(self, t[0])))
                 getattr(self, "movie_thread_{}".format(t[0])).start()
 
-
-
                 # todo only record if option set?
                 getattr(self, t[0]).start_recording()
                 # end todo
 
                 print("started: movie_thread_{}".format(t[0]))
-
         self.movie_thread_timer.start(30)
         self.recording = True
 
@@ -384,9 +423,9 @@ class MainWindow(QtWidgets.QMainWindow):
         frame = cv2.imread("exploratory_code/desk.png")
 
 
-        cnts, ballMask = helpers.find_ball_contours(frame, minhsv, maxhsv)
-        balls = helpers.extract_balls(frame, ballMask, cnts, numBalls=9)
-        cluster_idxs = helpers.cluster_balls(balls, clusters=3, debug=False)
+        cnts, ballMask = balls.find_ball_contours(frame, minhsv, maxhsv)
+        balls = balls.extract_balls(frame, ballMask, cnts, numBalls=9)
+        cluster_idxs = balls.cluster_balls(balls, clusters=3, debug=False)
 
         # sort clusters according to length and assume pallino, teamHome, teamAway
         cluster_idxs.sort(key=len)
@@ -396,7 +435,7 @@ class MainWindow(QtWidgets.QMainWindow):
         teamAway_idxs = cluster_idxs[2]
 
         # determine the frame score
-        scoreInfo = helpers.calculate_frame_score(frame, balls,
+        scoreInfo = balls.calculate_frame_score(frame, balls,
                                                 pallino_idx,
                                                 teamHome_idxs,
                                                 teamAway_idxs, ord("r"))
@@ -423,6 +462,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.teamAway_name = self.textEdit_teamAway.toPlainText()
         self.GAME_MINUTES = int(self.spinBox_game_minutes_setting.value())
         self.DOWN_BACK_ENABLED = self.checkBox_down_back_setting.isChecked()
+        self.court1_orientation = self.textEdit_court1_orientation.toPlainText()
+        self.pushButton_start_game.setEnabled(True)
+
+        # set camera recording filenames
+        table_data = self.get_tableWidget_cameras_data(self.tableWidget_cameras)
+        for t in table_data:
+            # if the checkbox in column 1 is checked, set it to record
+            if t[1]:
+                getattr(self, t[0]).set_teams(self.teamHome_name, self.teamAway_name)
 
     def initialize_game(self):
         # create a venue
@@ -432,7 +480,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # create courts
         print("\n[INFO] Creating three courts...")
-        cFence = Court("Fence", "north-south")
+        cFence = Court("Fence", self.court1_orientation)
 
         # add courts to the venue
         v.add_court(cFence)
@@ -442,9 +490,9 @@ class MainWindow(QtWidgets.QMainWindow):
         print(str(v) + ": " + v.str_courts())
 
         # add cameras to the sidewalk court
-        print(
-            "\n[INFO] Creating a camera and assigning them to a court...")
-        cFence.add_birdseye_cam(self.cam8)
+        # print(
+        #     "\n[INFO] Creating a camera and assigning them to a court...")
+        # cFence.add_birdseye_cam(self.cam8)
 
         # create some players
         print("\n[INFO] Creating four players...")
@@ -473,7 +521,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # create a game
         # a game consists of (a) umpire, (b) home team, (c) away team
         print("\n[INFO] Setting up a death match...")
-        u = Umpire("Alicia", "null")
+        u = Umpire("Cartman", "null")
         self.g = Game(umpire=u, teamHome=teamAway, teamAway=teamHome)
         print(str(self.g))
 
@@ -482,8 +530,6 @@ class MainWindow(QtWidgets.QMainWindow):
         cFence.set_game(self.g)
         print("\n[INFO] Game is being played at {} on {}...".format(
             str(v), str(cFence)))
-        self.g.start()
-        print("[INFO] Game is started; clock is set...\n")
 
     def start_game(self):
         # reset score info
@@ -492,15 +538,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.lcdNumber_frame_score_teamAway.display(str(0))
         self.lcdNumber_game_score_teamHome.display(str(0))
         self.lcdNumber_game_score_teamAway.display(str(0))
-        self.label_game_score_teamHome.setText(str("Home"))
-        self.label_game_score_teamAway.setText(str("Away"))
+
 
         # initialize the game
         self.initialize_game()
-        self.g.start()
-        status = "game in progress"
-        self.label_status.setText(status)
-        self.set_status_palette(status)
+        self.label_game_score_teamHome.setText(str(self.g.teamHome))
+        self.label_game_score_teamAway.setText(str(self.g.teamAway))
+
 
         # start timer
         self.gameTimer.timeout.connect(self.time_tick)
@@ -508,19 +552,84 @@ class MainWindow(QtWidgets.QMainWindow):
         self.time_min_left = self.GAME_MINUTES - 1
         self.time_sec_left = 60
 
+        # start the game
+        self.g.start()
+        print("[INFO] Game is started; clock is set...\n")
+        status = "game in progress"
+        self.label_status.setText(status)
+        self.set_status_palette(status)
+
+        self.pushButton_start_frame.setEnabled(True)
+        self.pushButton_start_game.setEnabled(False)
+
+    def start_frame(self):
+        # todo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        oddSideCam = self.cam1
+        evenSideCam = self.cam3
 
 
-    def score_frame(self):
-        self.g.play_a_frame()
+        self.pushButton_throw.setEnabled(True)
+        self.pushButton_start_frame.setEnabled(False)
+        self.pushButton_end_frame.setEnabled(False)
+        self.g.set_cam(oddSideCam, evenSideCam)
+        self.g.play_next_frame()
+
+    def end_frame(self):
+        self.g.end_frame_and_set_score()
+        self.g.print_score()
         self.set_score_temp(self.g.frameWinner, self.g.framePoints)
-        winner = self.g.gameWinner
-        if winner is not None:
+
+        if self.g.teamHomeScore >= self.g.playTo:
+            self.g.gameWinner = self.g.teamHome
+            self.g.end()
+        elif self.g.teamAwayScore >= self.g.playTo:
+            self.g.gameWinner = self.g.teamAway
+            self.g.end()
+        if not self.timeRemaining:
+            self.g.end()
+
+        # check for winner and end game if there is one
+        if self.g.gameWinner is not None:
             status = "game winner: {}".format(self.g.gameWinner)
             self.label_status.setText(status)
             self.set_status_palette(status)
-            self.set_game_winner_check(winner)
-        else:
+            self.set_game_winner_check(self.g.gameWinner)
+            self.gameTimer.stop()
             self.g.end()
+        else:
+            # we need to play another frame
+            self.pushButton_start_frame.setEnabled(True)
+            self.pushButton_end_frame.setEnabled(False)
+
+    def throw(self):
+        self.g.currentFrame.handle_throw()
+
+        # todo update balls on court
+        self.lcdNumber_home_ballsoncourt.display(str(self.g.currentFrame.numThrowsTeamHome))
+        self.lcdNumber_away_ballsoncourt.display(str(self.g.currentFrame.numThrowsTeamAway))
+
+        # set closest to pallino check
+        check = cv2.imread('views/ui/check_gray.png', cv2.IMREAD_UNCHANGED)
+        check = cv2.resize(check, (25, 25))
+        height, width, channel = check.shape
+        bytesPerLine = 4 * width
+        qImg = QImage(check.data, width, height, bytesPerLine, QImage.Format_RGBA8888)
+
+        if self.g.currentFrame.whoseIn == self.g.teamHome:
+            self.label_home_closesttopallino_check.setPixmap(QPixmap(qImg))
+            self.label_home_closesttopallino_check.repaint()
+            self.label_away_closesttopallino_check.clear()
+
+        elif self.g.currentFrame.whoseIn == self.g.teamAway:
+            self.label_away_closesttopallino_check.setPixmap(QPixmap(qImg))
+            self.label_away_closesttopallino_check.repaint()
+            self.label_home_closesttopallino_check.clear()
+
+
+        if self.g.currentFrame.frameWinner is not None:
+            self.pushButton_throw.setEnabled(False)
+            self.pushButton_end_frame.setEnabled(True)
+
 
     def set_score_temp(self, frameWinnerTeam, framePoints):
         color = (0, 0, 0)
@@ -624,54 +733,74 @@ class MainWindow(QtWidgets.QMainWindow):
         self.annotation_team = ATeam()
         self.annotation_player = APlayer()
         self.annotation_time = ATime()
-        self.annotation_balltrails = ABallrails()
+        self.annotation_balltrails = ABallTrails()
         self.annotation_venue = AVenue()
+        self.annotation_vectors = AVectors()
 
     def annotation_pipeline(self, frame):
         if self.g is None:
             score = None
         else:
             score = (self.g.teamHomeScore, self.g.teamAwayScore)
+            frame = self.annotation_score.annotate(frame, score=score)
 
-        frame = self.annotation_score.annotate(frame, score=score)
+            if self.g.currentFrame is None:
+                pass
+            else:
+                frame = self.annotation_vectors.annotate(frame,
+                                                         pallino=self.g.currentFrame.pallino,
+                                                         homeBalls=self.g.teamHome.balls,
+                                                         awayBalls=self.g.teamAway.balls)
+                frame = self.annotation_time.annotate(frame)
+                frame = self.annotation_balltrails.annotate(frame)
+
         frame = self.annotation_team.annotate(frame)
         frame = self.annotation_player.annotate(frame)
-        frame = self.annotation_time.annotate(frame)
-        frame = self.annotation_balltrails.annotate(frame)
         frame = self.annotation_venue.annotate(frame)
+
         return frame
 
-    def annotation_change(self):
+    def annotation_change(self, annotation, annotation_checkbox):
+        if annotation_checkbox.isChecked():
+            annotation.activate()
+        elif not annotation_checkbox.isChecked():
+            annotation.deactivate()
+
         # handle each annotation independently
-        if self.checkBox_annotation_venue.isChecked():
-            self.annotation_score.activate()
-        elif not self.checkBox_annotation_venue.isChecked():
-            self.annotation_score.deactivate()
-
-        if self.checkBox_annotation_team.isChecked():
-            self.annotation_team.activate()
-        elif not self.checkBox_annotation_team.isChecked():
-            self.annotation_team.deactivate()
-
-        if self.checkBox_annotation_player.isChecked():
-            self.annotation_player.activate()
-        elif not self.checkBox_annotation_player.isChecked():
-            self.annotation_player.deactivate()
-
-        if self.checkBox_annotation_score.isChecked():
-            self.annotation_score.activate()
-        elif not self.checkBox_annotation_score.isChecked():
-            self.annotation_score.deactivate()
-
-        if self.checkBox_annotation_balltrails.isChecked():
-            self.annotation_balltrails.activate()
-        elif not self.checkBox_annotation_balltrails.isChecked():
-            self.annotation_balltrails.deactivate()
-
-        if self.checkBox_annotation_time.isChecked():
-            self.annotation_time.activate()
-        elif not self.checkBox_annotation_time.isChecked():
-            self.annotation_time.deactivate()
+        # if self.checkBox_annotation_venue.isChecked():
+        #     self.annotation_venue.activate()
+        # elif not self.checkBox_annotation_venue.isChecked():
+        #     self.annotation_venue.deactivate()
+        #
+        # if self.checkBox_annotation_team.isChecked():
+        #     self.annotation_team.activate()
+        # elif not self.checkBox_annotation_team.isChecked():
+        #     self.annotation_team.deactivate()
+        #
+        # if self.checkBox_annotation_player.isChecked():
+        #     self.annotation_player.activate()
+        # elif not self.checkBox_annotation_player.isChecked():
+        #     self.annotation_player.deactivate()
+        #
+        # if self.checkBox_annotation_score.isChecked():
+        #     self.annotation_score.activate()
+        # elif not self.checkBox_annotation_score.isChecked():
+        #     self.annotation_score.deactivate()
+        #
+        # if self.checkBox_annotation_balltrails.isChecked():
+        #     self.annotation_balltrails.activate()
+        # elif not self.checkBox_annotation_balltrails.isChecked():
+        #     self.annotation_balltrails.deactivate()
+        #
+        # if self.checkBox_annotation_time.isChecked():
+        #     self.annotation_time.activate()
+        # elif not self.checkBox_annotation_time.isChecked():
+        #     self.annotation_time.deactivate()
+        #
+        # if self.checkBox_annotation_vectors.isChecked():
+        #     self.annotation_vectors.activate()
+        # elif not self.checkBox_annotation_vectors.isChecked():
+        #     self.annotation_vectors.deactivate()
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)

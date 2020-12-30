@@ -59,7 +59,7 @@ class Game:
 
         # zero
         if self.frameCount == 0:
-            return "not started!"
+            return self.orientation.split("-")[0]
         # odd
         elif self.frameCount % 2 == 1:
             return self.orientation.split("-")[0]
@@ -75,11 +75,13 @@ class Game:
                                   throwingEnd=self.get_throwing_end(),
                                   pallinoThrowingTeam=pallinoThrowingTeam,
                                   teamHome=self.teamHome,
-                                  teamAway=self.teamAway)
+                                  teamAway=self.teamAway,
+                                  cam=self.cam)
+        print("current frame is set")
         self.frames.append(self.currentFrame)
         self.currentFrame.initialize_balls(len(self.teamHome.players))
         self.frameCount += 1
-        self.currentFrame.frame_runner()
+        self.currentFrame.start()
 
     def get_pallino_throwing_team(self):
         if self.frameCount == 0:
@@ -87,18 +89,13 @@ class Game:
         else:
             return self.currentFrame.frameWinner
 
-    def play_a_frame(self):
-        self.play_next_frame()
-        self.end_frame_and_set_score()
-        self.print_score()
-        if self.teamHomeScore >= self.playTo:
-            self.gameWinner = self.teamHome
-            self.end()
-        elif self.teamAwayScore >= self.playTo:
-            self.gameWinner = self.teamAway
-            self.end()
-        if not self.timeRemaining:
-            self.end()
+    def set_cam(self, oddSideCam, evenSideCam):
+        cam = None
+        if self.get_throwing_end() == "east":
+            cam = oddSideCam
+        elif self.get_throwing_end() == "west":
+            cam = evenSideCam
+        self.cam = cam
 
     def end_frame_and_set_score(self):
         self.frameWinner, self.framePoints = self.currentFrame.end()

@@ -1,0 +1,3 @@
+Interesting Snooker / Pool YOLO labeling:
+
+https://github.com/kristiansyrjanen/billystat
