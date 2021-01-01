@@ -40,7 +40,7 @@
     </sizepolicy>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="tab_court1">
     <attribute name="title">
@@ -1455,6 +1455,19 @@
       </property>
      </widget>
     </widget>
+    <widget class="QLabel" name="label_rec_indicator">
+     <property name="geometry">
+      <rect>
+       <x>720</x>
+       <y>765</y>
+       <width>58</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>🔴 REC</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="tab_config">
     <attribute name="title">
@@ -1710,12 +1723,12 @@
      </item>
      <item row="3" column="2">
       <property name="text">
-       <string>PubSubImageZMQCamera</string>
+       <string>ImageZMQCamera</string>
       </property>
      </item>
      <item row="3" column="3">
       <property name="text">
-       <string>null</string>
+       <string>rpi3bplus,5558</string>
       </property>
      </item>
      <item row="3" column="4">
@@ -2065,6 +2078,19 @@ p, li { white-space: pre-wrap; }
      </property>
      <property name="text">
       <string>Court 1 Orientation:</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_stop_recording">
+     <property name="geometry">
+      <rect>
+       <x>1170</x>
+       <y>160</y>
+       <width>181</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>❌ Stop Recording</string>
      </property>
     </widget>
    </widget>

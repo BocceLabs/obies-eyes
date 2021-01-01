@@ -12,16 +12,16 @@ import os
 VIDEO_DIR = "videos"
 
 class Camera:
-    def __init__(self, name, source, flip=False):
+    def __init__(self, name=None, source=None, flip=False, *args, **kwargs):
         self.name = name
         self.source = source
         self.flip = flip
         self.recording = False
-        self.fourcc = cv2.VideoWriter_fourcc(*"MP4V")
         self.writer = None
         self.h = None
         self.w = None
         self.initialized = False
+        self.width = 600
 
         self.teams = "None-vs-None"
 
@@ -36,25 +36,33 @@ class Camera:
 
     def acquire_movie(self):
         while True:
+            self.get_frame()
             if self.recording:
                 if self.writer is None:
-                    (self.h, self.w) = self._get_frame().shape[:2]
-                    filename = self.name + "_" + self.teams + "_" \
-                        + datetime.now().strftime("%Y-%m-%d_%H%M%S") + ".mp4"
-                    filepath = os.path.join(VIDEO_DIR, filename)
-                    self.writer = cv2.VideoWriter(filepath, self.fourcc, 25,
-                        (self.w, self.h), True)
-                self.writer.write(self.get_frame())
-            else:
-                self.get_frame()
+                    self.initialize_writer()
+                elif self.writer is not None:
+                    self.writer.write(self.last_frame)
+                else:
+                    continue
+
+    def initialize_writer(self):
+        self.fourcc = cv2.VideoWriter_fourcc(*"MJPG") # use with the .avi file extension
+        (self.h, self.w) = self._get_frame().shape[:2]
+        filename = self.name + "_" + self.teams + "_" \
+                   + datetime.now().strftime("%Y-%m-%d_%H%M%S") + ".avi"
+        self.filepath = os.path.join(VIDEO_DIR, filename)
+        self.writer = cv2.VideoWriter(self.filepath, self.fourcc, 18, (self.w, self.h), True)
 
     def start_recording(self):
         self.recording = True
 
     def stop_recording(self):
-        self.recording = False
-        self.writer.release()
-        self.writer = None
+        if self.recording:
+            self.recording = False
+        if self.writer is not None:
+            self.writer.release()
+            print("File saved successfully: {}".format(self.filepath))
+            self.writer = None
 
     def set_teams(self, teamHome, teamAway):
         self.teams = teamHome + "-vs-" + teamAway
@@ -63,23 +71,19 @@ class Camera:
         return "{}: {}".format(self.__class__.__name__, self.name, self.source)
 
     def close_camera(self):
+        self.stop_recording()
+        self.teams = "None-vs-None"
+        self.initialized = False
+        self._close_camera()
+
+    def _close_camera(self):
         pass
 
 
 class USBCamera(Camera):
-    def __init__(self, name, source, flip=False):
-        self.name = name
+    def __init__(self, name=None, source=None, flip=False, *args, **kwargs):
+        super(USBCamera, self).__init__(*args, **kwargs)
         self.source = int(source)
-        self.flip = flip
-        self.recording = False
-        self.fourcc = cv2.VideoWriter_fourcc(*"MP4V")
-        self.writer = None
-        self.h = None
-        self.w = None
-
-        self.width = 600
-        self.last_frame = None
-        self.initialized = False
 
     def initialize(self):
         if not self.initialized:
@@ -95,17 +99,16 @@ class USBCamera(Camera):
             frame = cv2.flip(frame, 1)
         return frame
 
-    def close_camera(self):
+    def _close_camera(self):
         self.cap.release()
-        self.initialized = False
 
 class RTSPCamera(Camera):
-    def __init__(self, name, source, flip=False):
+    def __init__(self, name=None, source=None, flip=False, *args, **kwargs):
+        super(RTSPCamera, self).__init__(*args, **kwargs)
         self.name = name
         self.source = str(source)
         self.flip = flip
         self.recording = False
-        self.fourcc = cv2.VideoWriter_fourcc(*"MP4V")
         self.writer = None
         self.h = None
         self.w = None
@@ -160,17 +163,17 @@ class RTSPCamera(Camera):
         print("Camera Connection Closed")
         conn.close()
 
-    def close_camera(self):
+    def _close_camera(self):
         self.is_open = False
 
 class ImageZMQCamera(Camera):
-    def __init__(self, name, source, flip=False):
+    def __init__(self, name, source, flip=False, *args, **kwargs):
+        super(ImageZMQCamera, self).__init__(*args, **kwargs)
         self.name = name
         self.source = str(source).split(",")[0]
         self.port = str(source).split(",")[1]
         self.flip = flip
         self.recording = False
-        self.fourcc = cv2.VideoWriter_fourcc(*"MP4V")
         self.writer = None
         self.h = None
         self.w = None
@@ -196,16 +199,16 @@ class ImageZMQCamera(Camera):
             frame = cv2.flip(frame, 1)
         return frame
 
-    def close_camera(self):
+    def _close_camera(self):
         self.image_hub = None
 
 class PubSubImageZMQCamera(Camera):
-    def __init__(self, name, source, flip=False):
+    def __init__(self, name, source, flip=False, *args, **kwargs):
+        super(PubSubImageZMQCamera, self).__init__(*args, **kwargs)
         self.name = name
         self.source = source
         self.flip = flip
         self.recording = False
-        self.fourcc = cv2.VideoWriter_fourcc(*"MP4V")
         self.writer = None
         self.h = None
         self.w = None
@@ -233,7 +236,7 @@ class PubSubImageZMQCamera(Camera):
             frame = cv2.flip(frame, 1)
         return frame
 
-    def close_camera(self):
+    def _close_camera(self):
         self.receiver.close()
 
 class VideoStreamSubscriber:

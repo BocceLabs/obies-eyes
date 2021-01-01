@@ -5,9 +5,12 @@ username="pi"
 password="raspberry"
 
 # all rpi camera hosts
-pi_hosts=(rpi4b8gb \
-          rpi4b4gb \
-          rpi4b2gb)
+# rpi4b8gb \
+# rpi4b4gb \
+# rpi4b2gb)
+pi_hosts=(rpi3bplus \
+    )
+
 
 # NOTE: Be sure to update client_bash.sh to include the port number!!!
 

@@ -17,6 +17,8 @@ elif [ "$(echo $HOSTNAME)" = "rpi4b4gb" ]; then
     PORT='5556'
 elif [ "$(echo $HOSTNAME)" = "rpi4b2gb" ]; then
     PORT='5555'
+elif [ "$(echo $HOSTNAME)" = "rpi3bplus" ]; then
+    PORT='5558'
 else
     echo "INVALID HOSTNAME"
 fi
@@ -36,10 +38,18 @@ cd $IMAGEZMQ_PATH
 
 # starting the stream
 echo "====starting the stream===="
-sudo pkill python
+#if pgrep python; then pkill python; fi
+kill -9 `cat save.pid`
+rm save.pid
 which python
 echo "server: " $SERVER
 echo "port: " $PORT
-nohup python client.py --server-ip $SERVER --server-port $PORT &
+# start the client, save output/error to log file, and save the PID (program ID) so we can kill it next time
+nohup python client.py --server-ip $SERVER --server-port $PORT > my.log 2>&1 &
+echo $! > save.pid
+
+#nohup python test.py &
+echo "success"
+
 
 

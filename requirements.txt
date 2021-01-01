@@ -4,3 +4,5 @@ imutils
 PyQt5
 PySide2
 QtPy
+pillow
+imagezmq

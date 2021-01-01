@@ -39,7 +39,12 @@ class MovieThread(QThread):
         self.camera = camera
 
     def run(self):
+        self.camera.start_recording()
+        print("started recording; attempting to acquire movie")
         self.camera.acquire_movie()
+
+    def quit(self):
+        self.camera.stop_recording()
 
 class MainWindow(QtWidgets.QMainWindow):
     """
@@ -72,6 +77,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.movie_thread = None
         self.movie_thread_timer = QTimer()
         self.movie_thread_timer.timeout.connect(self.update_movie)
+        self.label_rec_indicator.hide()
+        self.movie_ticker = 0
 
         # game timer and down/back setting
         self.GAME_MINUTES = None
@@ -84,6 +91,8 @@ class MainWindow(QtWidgets.QMainWindow):
         # recording
         self.recording = False
         self.pushButton_record.clicked.connect(self.start_movie)
+        self.pushButton_stop_recording.clicked.connect(self.stop_movie)
+        self.pushButton_stop_recording.setEnabled(False)
 
         # camera source radio buttons
         self.radioButton_cam1.clicked.connect(self.get_camera_source)
@@ -146,9 +155,22 @@ class MainWindow(QtWidgets.QMainWindow):
         self.pushButton_throw.clicked.connect(self.throw)
         self.pushButton_end_frame.clicked.connect(self.end_frame)
 
-    """
-    sets the camera view to an oddball image residing on disk
-    """
+    def closeEvent(self, event):
+        """
+        Runs when the QMainWindow is closed
+        :param event:
+        :return:
+        """
+        # otherwise, record all camera feeds
+        table_data = self.get_tableWidget_cameras_data(self.tableWidget_cameras)
+        for t in table_data:
+            # if the checkbox in column 1 is checked, set it to record
+            if t[1]:
+                getattr(self, "movie_thread_{}".format(t[0])).quit()
+                print("stopped: movie_thread_{} gracefully before exiting".format(t[0]))
+
+
+
     def set_default_img(self):
         frame = cv2.imread('views/ui/oddball.png')
         frame = imutils.resize(frame, width = 600)
@@ -159,11 +181,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_camera.setPixmap(QPixmap(qImg))
         self.label_camera.repaint()
 
-    """
-    sets the camera view source from the radio buttons on the court tab
-    @return (camera object, movie thread object)
-    """
     def get_camera_source(self):
+        """
+        sets the camera view source from the radio buttons on the court tab
+        :return:
+        """
         # switch case to change the camera source
         if self.radioButton_cam1.isChecked():
             return self.cam1, self.movie_thread_cam1
@@ -192,11 +214,12 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             return None
 
-    """
-    this method reads the config tab camera table data
-    @return table_data
-    """
     def get_tableWidget_cameras_data(self, item):
+        """
+        this method reads the config tab camera table data
+        :param item:
+        :return:
+        """
         rows = self.tableWidget_cameras.rowCount()
         r=0
 
@@ -217,10 +240,11 @@ class MainWindow(QtWidgets.QMainWindow):
         #print(table_data)
         return table_data
 
-    """
-    this method unchecks all camera sources in the config tab table
-    """
     def initialize_tableWidget_cameras_checkedstate(self):
+        """
+        this method unchecks all camera sources in the config tab table
+        :return:
+        """
         rows = self.tableWidget_cameras.rowCount()
         r=0
         while r < rows:
@@ -228,10 +252,11 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tableWidget_cameras.item(r, 1).setCheckState(False)
             r+=1
 
-    """
-    this method reads the config tab table and sets up camera sources
-    """
     def set_camera_source_data(self):
+        """
+        this method reads the config tab table and sets up camera sources
+        :return:
+        """
         table_data = self.get_tableWidget_cameras_data(self.tableWidget_cameras)
 
         # set Court1 radio button labels
@@ -270,10 +295,11 @@ class MainWindow(QtWidgets.QMainWindow):
             else:
                 getattr(self, "radioButton_{}".format(t[0])).setEnabled(False)
 
-    """
-    grabs an image from a camera and displays it
-    """
     def get_image_from_cam(self):
+        """
+        grabs an image from a camera and displays it
+        :return:
+        """
         cam = self.get_camera_source()[0]
         frame = cam.get_frame()
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -284,10 +310,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_camera.repaint()
         return frame
 
-    """
-    grabs frames from a camera and displays it continuously
-    """
     def update_movie(self):
+        """
+        grabs frames from a camera and displays it continuously
+        :return:
+        """
         # grab the last frame from the selected camera source
         frame = self.get_camera_source()[0].last_frame
 
@@ -305,50 +332,58 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_camera.setPixmap(QPixmap(qImg))
         self.label_camera.repaint()
 
-    """
-    starts movie threads for each active camera and sets the camera source to record
-    """
-    def start_movie(self):
-        # if we're already recording, stop recording
+        # blink the recording indicator
         if self.recording:
-            self.stop_movie()
-            self.recording = False
-            return
+            if self.movie_ticker >= 50:
+                self.movie_ticker = 0
+            if self.movie_ticker > 25:
+                self.label_rec_indicator.show()
+            else:
+                self.label_rec_indicator.hide()
+            self.movie_ticker += 1
+        else:
+            self.label_rec_indicator.hide()
 
+    def start_movie(self):
+        """
+        starts movie threads for each active camera and sets the camera source to record
+        :return:
+        """
         # otherwise, record all camera feeds
         table_data = self.get_tableWidget_cameras_data(self.tableWidget_cameras)
         for t in table_data:
             # if the checkbox in column 1 is checked, set it to record
             if t[1]:
-                setattr(self, "movie_thread_{}".format(t[0]), MovieThread(getattr(self, t[0])))
-                getattr(self, "movie_thread_{}".format(t[0])).start()
+                if getattr(self, "movie_thread_{}".format(t[0])) is None:
+                    setattr(self, "movie_thread_{}".format(t[0]), MovieThread(getattr(self, t[0])))
+                    getattr(self, "movie_thread_{}".format(t[0])).start()
+                    print("started: movie_thread_{}".format(t[0]))
+                else:
+                    # the thread already exists so we just need to start recording camera-side
+                    getattr(self, "{}".format(t[0])).set_teams(self.teamHome_name, self.teamAway_name)
+                    getattr(self, "{}".format(t[0])).start_recording()
 
-                # todo only record if option set?
-                getattr(self, t[0]).start_recording()
-                # end todo
-
-                print("started: movie_thread_{}".format(t[0]))
         self.movie_thread_timer.start(30)
         self.recording = True
+        self.pushButton_record.setEnabled(False)
+        self.pushButton_stop_recording.setEnabled(True)
 
-    """
-    stops all movie threads and sets recording to false
-    """
     def stop_movie(self):
+        """
+        stops movie threads for each active camera and sets the camera source to record
+        :return:
+        """
+        # otherwise, record all camera feeds
         table_data = self.get_tableWidget_cameras_data(self.tableWidget_cameras)
-
         for t in table_data:
             # if the checkbox in column 1 is checked, set it to record
             if t[1]:
                 getattr(self, "movie_thread_{}".format(t[0])).quit()
-                setattr(self, "movie_thread_{}".format(t[0]), None)
-                getattr(self, t[0]).stop_recording()
                 print("stopped: movie_thread_{}".format(t[0]))
-
         self.recording = False
-
-        # movie_thread.quit()
-        # time.sleep(.2)
+        self.pushButton_record.setEnabled(True)
+        self.pushButton_stop_recording.setEnabled(False)
+        self.label_rec_indicator.hide()
 
     def set_game_score_palette(self, teamHome, teamAway):
         palette_lcd_teamHome = self.lcdNumber_game_score_teamHome.palette()
@@ -699,8 +734,11 @@ class MainWindow(QtWidgets.QMainWindow):
             self.label_game_check_away.repaint()
             self.label_game_check_home.clear()
 
-    """this method is called each time a second passes"""
     def time_tick(self):
+        """
+        this method is called each time a second passes
+        :return:
+        """
         # subtract a second
         self.time_sec_left -= 1
 
@@ -722,8 +760,12 @@ class MainWindow(QtWidgets.QMainWindow):
         # update the timer on the UI
         self.game_time_ui_update()
 
-    """this method updates the time indicator on the GUI"""
+
     def game_time_ui_update(self):
+        """
+        this method updates the time indicator on the GUI
+        :return:
+        """
         self.lcdNumber_game_time_remaining_min.display(str(self.time_min_left).zfill(2))
         self.lcdNumber_game_time_remaining_sec.display(str(self.time_sec_left).zfill(2))
 
