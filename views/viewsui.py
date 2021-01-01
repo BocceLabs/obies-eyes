@@ -33,6 +33,7 @@ from video_production.annotations.balltrails import BallTrails as ABallTrails
 from video_production.annotations.vectors import Vectors as AVectors
 
 
+
 class MovieThread(QThread):
     def __init__(self, camera):
         super().__init__()
@@ -87,6 +88,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.time_min_left = 0
         self.time_sec_left = 0
         self.game_time_ui_update()
+
+        # minimal game info
+        self.teamHome_name = ""
+        self.teamAway_name = ""
 
         # recording
         self.recording = False
@@ -367,6 +372,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.recording = True
         self.pushButton_record.setEnabled(False)
         self.pushButton_stop_recording.setEnabled(True)
+        self.tableWidget_cameras.setEnabled(False)
 
     def stop_movie(self):
         """
@@ -383,6 +389,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.recording = False
         self.pushButton_record.setEnabled(True)
         self.pushButton_stop_recording.setEnabled(False)
+        self.tableWidget_cameras.setEnabled(True)
         self.label_rec_indicator.hide()
 
     def set_game_score_palette(self, teamHome, teamAway):

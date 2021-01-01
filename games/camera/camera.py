@@ -48,7 +48,7 @@ class Camera:
     def initialize_writer(self):
         self.fourcc = cv2.VideoWriter_fourcc(*"MJPG") # use with the .avi file extension
         (self.h, self.w) = self._get_frame().shape[:2]
-        filename = self.name + "_" + self.teams + "_" \
+        filename = str(self.name) + "_" + self.teams + "_" \
                    + datetime.now().strftime("%Y-%m-%d_%H%M%S") + ".avi"
         self.filepath = os.path.join(VIDEO_DIR, filename)
         self.writer = cv2.VideoWriter(self.filepath, self.fourcc, 18, (self.w, self.h), True)
@@ -164,7 +164,9 @@ class RTSPCamera(Camera):
         conn.close()
 
     def _close_camera(self):
-        self.is_open = False
+        #self.is_open = False
+        self.p.join()
+        self.initialized = False
 
 class ImageZMQCamera(Camera):
     def __init__(self, name, source, flip=False, *args, **kwargs):
@@ -200,6 +202,7 @@ class ImageZMQCamera(Camera):
         return frame
 
     def _close_camera(self):
+        self.image_hub.close()
         self.image_hub = None
 
 class PubSubImageZMQCamera(Camera):
