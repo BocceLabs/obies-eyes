@@ -11,6 +11,8 @@ import os
 
 VIDEO_DIR = "videos"
 
+MAX_RECORDING_RESTARTS = 8
+
 class Camera:
     def __init__(self, name=None, source=None, flip=False, *args, **kwargs):
         self.name = name
@@ -22,6 +24,8 @@ class Camera:
         self.w = None
         self.initialized = False
         self.width = 600
+        self.recordingStartTime = time.time()
+        self.restartCount = 0
 
         self.teams = "None-vs-None"
 
@@ -36,12 +40,42 @@ class Camera:
 
     def acquire_movie(self):
         while True:
-            self.get_frame()
+            # stop recording after 5 minutes (300 seconds)
+            # if not self.recording and time.time() - self.recordingStartTime >= 300:
+            #     self.stop_recording()
+
+            # try to grab a frame
+            try:
+                self.get_frame()
+
+            # if grabbing a frame was unsuccessful, try again
+            except:
+                print("\n\nEXCEPTION while trying to grab frame; passing.\n\n")
+                pass
+                # if self.recording and not self.writer is None:
+                    # print("\n\nEXCEPTION while trying to grab frame; stopping recording, "
+                    #       "restarting connection, and starting recording again.\n\n")
+                    # if self.restartCount >= MAX_RECORDING_RESTARTS:
+                    #     print("Restart count {} of {}".format(self.restartCount, MAX_RECORDING_RESTARTS))
+                    #     self.stop_recording()
+                    #     self.close_camera()
+                    #     return
+                    # self.restartCount += 1
+                    # self.stop_recording()
+                    # self.close_camera()
+                    # self.initialize()
+                    # self.recording = True
+                    # self.get_frame()
             if self.recording:
                 if self.writer is None:
+                    self.recordingStartTime = time.time()
                     self.initialize_writer()
                 elif self.writer is not None:
-                    self.writer.write(self.last_frame)
+                    try:
+                        self.writer.write(self.last_frame)
+                    except Exception as e:
+                        print("\n\nEXCEPTION while writing to disk; stopping recording.\n{}\n\n".format(str(e)))
+                        self.stop_recording()
                 else:
                     continue
 
@@ -54,6 +88,7 @@ class Camera:
         self.writer = cv2.VideoWriter(self.filepath, self.fourcc, 18, (self.w, self.h), True)
 
     def start_recording(self):
+        # todo should starting self.recordingStartTime go here? see Line ~62
         self.recording = True
 
     def stop_recording(self):
@@ -63,6 +98,7 @@ class Camera:
             self.writer.release()
             print("File saved successfully: {}".format(self.filepath))
             self.writer = None
+        # self.recordingStartTime = None
 
     def set_teams(self, teamHome, teamAway):
         self.teams = teamHome + "-vs-" + teamAway

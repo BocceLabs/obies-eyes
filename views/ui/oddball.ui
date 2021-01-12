@@ -40,7 +40,7 @@
     </sizepolicy>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="tab_court1">
     <attribute name="title">
@@ -506,9 +506,9 @@
      <widget class="QLCDNumber" name="lcdNumber_game_score_teamHome">
       <property name="geometry">
        <rect>
-        <x>210</x>
+        <x>230</x>
         <y>70</y>
-        <width>111</width>
+        <width>91</width>
         <height>81</height>
        </rect>
       </property>
@@ -556,7 +556,7 @@
      <widget class="QLCDNumber" name="lcdNumber_frame_score_teamHome">
       <property name="geometry">
        <rect>
-        <x>170</x>
+        <x>190</x>
         <y>120</y>
         <width>31</width>
         <height>31</height>
@@ -644,7 +644,7 @@
      <widget class="QLabel" name="label_game_check_home">
       <property name="geometry">
        <rect>
-        <x>50</x>
+        <x>70</x>
         <y>100</y>
         <width>50</width>
         <height>50</height>
@@ -657,7 +657,7 @@
      <widget class="QLabel" name="label_frame_check_home">
       <property name="geometry">
        <rect>
-        <x>110</x>
+        <x>130</x>
         <y>100</y>
         <width>50</width>
         <height>50</height>
@@ -1626,12 +1626,12 @@
      </item>
      <item row="0" column="3">
       <property name="text">
-       <string>rpi4b4gb,5556</string>
+       <string>pict1playereast,5555</string>
       </property>
      </item>
      <item row="0" column="4">
       <property name="text">
-       <string>East</string>
+       <string>Player East</string>
       </property>
      </item>
      <item row="1" column="0">
@@ -1660,12 +1660,12 @@
      </item>
      <item row="1" column="3">
       <property name="text">
-       <string>rpi4b2gb,5555</string>
+       <string>pict1playerwest,5556</string>
       </property>
      </item>
      <item row="1" column="4">
       <property name="text">
-       <string>Center</string>
+       <string>Player West</string>
       </property>
      </item>
      <item row="2" column="0">
@@ -1694,12 +1694,12 @@
      </item>
      <item row="2" column="3">
       <property name="text">
-       <string>rpi4b8gb,5557</string>
+       <string>pict1birdeast,5557</string>
       </property>
      </item>
      <item row="2" column="4">
       <property name="text">
-       <string>West</string>
+       <string>Bird East</string>
       </property>
      </item>
      <item row="3" column="0">
@@ -1728,12 +1728,12 @@
      </item>
      <item row="3" column="3">
       <property name="text">
-       <string>rpi3bplus,5558</string>
+       <string>pict1birdmid,5558</string>
       </property>
      </item>
      <item row="3" column="4">
       <property name="text">
-       <string>PlayerSide A</string>
+       <string>Bird Mid</string>
       </property>
      </item>
      <item row="4" column="0">
@@ -1757,17 +1757,17 @@
      </item>
      <item row="4" column="2">
       <property name="text">
-       <string>PubSubImageZMQCamera</string>
+       <string>ImageZMQCamera</string>
       </property>
      </item>
      <item row="4" column="3">
       <property name="text">
-       <string>null</string>
+       <string>pict1birdwest,5559</string>
       </property>
      </item>
      <item row="4" column="4">
       <property name="text">
-       <string>PlayerSide C</string>
+       <string>Bird West</string>
       </property>
      </item>
      <item row="5" column="0">
@@ -1791,17 +1791,17 @@
      </item>
      <item row="5" column="2">
       <property name="text">
-       <string>RTSPCamera</string>
+       <string>ImageZMQCamera</string>
       </property>
      </item>
      <item row="5" column="3">
       <property name="text">
-       <string>rtsp://192.168.1.166</string>
+       <string>pict1observer,5560</string>
       </property>
      </item>
      <item row="5" column="4">
       <property name="text">
-       <string>iPhone</string>
+       <string>Observer</string>
       </property>
      </item>
      <item row="6" column="0">
@@ -2021,7 +2021,7 @@ p, li { white-space: pre-wrap; }
       </rect>
      </property>
      <property name="value">
-      <number>25</number>
+      <number>20</number>
      </property>
     </widget>
     <widget class="QLabel" name="label_game_time">

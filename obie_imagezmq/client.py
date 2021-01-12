@@ -12,6 +12,7 @@ import imagezmq
 import socket
 import time
 import signal
+import cv2
 
 # constant for the patience timeout
 TIMEOUT = 5
@@ -78,6 +79,9 @@ time.sleep(2.0)
 while True:
     # read a frame from the camera stream
     frame = vs.read()
+
+    # flip horizontally and vertically
+    frame = cv2.flip(frame, -1)
 
     # begins a try/catch block
     try:

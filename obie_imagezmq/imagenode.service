@@ -12,11 +12,11 @@ After=multi-user.target
 
 [Service]
 Type=idle
-WorkingDirectory=/home/pi/imagezmq_example
+WorkingDirectory=/home/pi/obie_imagezmq
 User=pi
 Restart=always
 RestartSec=5
-ExecStart=/home/pi/.virtualenvs/py3cv4/bin/python -u /home/pi/imagezmq_example/client.py --server-ip Davids-MBP --server-port 5558
+ExecStart=/home/pi/.virtualenvs/py3cv4/bin/python -u /home/pi/obie_imagezmq/client.py --server-ip Davids-MBP --server-port 5558
 
 [Install]
 WantedBy=multi-user.target
