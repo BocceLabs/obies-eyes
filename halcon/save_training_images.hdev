@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.2" halcon_version="21.05.0.0">
+<procedure name="main">
+<interface/>
+<body>
+<c>* This program takes images and saves them to a directory</c>
+<l>dev_update_off ()</l>
+<c></c>
+<c>* Set the training images directory</c>
+<l>Directory := 'training_images/'</l>
+<c></c>
+<c>* Camera connections</c>
+<l>open_framegrabber ('GigEVision2', 0, 0, 0, 0, 0, 0, 'progressive', -1, 'default', -1, 'false', 'default', '000f315dab70_AlliedVisionTechnologies_MakoG507C9617', 0, -1, AcqHandleWest)</l>
+<c>* Camera Parameters - West</c>
+<l>set_framegrabber_param (AcqHandleWest, 'TriggerSelector', 'FrameStart')</l>
+<l>set_framegrabber_param (AcqHandleWest, 'TriggerMode', 'On')</l>
+<l>set_framegrabber_param (AcqHandleWest, 'TriggerSource', 'Freerun')</l>
+<l>set_framegrabber_param (AcqHandleWest, 'ExposureAuto', 'Continuous')</l>
+<l>set_framegrabber_param (AcqHandleWest, 'ExposureMode', 'Timed')</l>
+<c></c>
+<c>* Create a window</c>
+<l>dev_get_window (WindowHandle)</l>
+<l>dev_set_line_width (2)</l>
+<c></c>
+<c>* Set the ROI</c>
+<l>gen_rectangle1(Rectangle, 1140, 660, 1470, 1625)</l>
+<c></c>
+<c>* Save images</c>
+<l>i := 0</l>
+<l>while(1)</l>
+<c>    * Grab a character ("r"=red, "b"=blue, "h"=home, "a"=away, etc.)</c>
+<l>    read_char(WindowHandle, character, code)</l>
+<c>    </c>
+<c>    * Break if 'q' is pressed</c>
+<l>    if(character=='q')</l>
+<l>        break</l>
+<l>    endif</l>
+<c>    </c>
+<c>    * Grab an image and extract the ROI</c>
+<l>    grab_image_async (ImageWest, AcqHandleWest, -1)</l>
+<l>    reduce_domain(ImageWest, Rectangle, ImageReducedWest)</l>
+<c>    </c>
+<c>    * Display the ROI</c>
+<l>    dev_display(ImageReducedWest)</l>
+<c>    </c>
+<c>    * Save the image to disk</c>
+<l>    tuple_string(i, '.4d', num)</l>
+<l>    tuple_add(character, '_', characterUnderscore)</l>
+<l>    tuple_add(characterUnderscore, num, Filename)</l>
+<l>    tuple_add(Filename, '.hobj', Filename)</l>
+<l>    tuple_add(character, '/', SubDirectory)</l>
+<l>    tuple_add(Directory, SubDirectory, Path)</l>
+<l>    try</l>
+<l>        make_dir(Path)</l>
+<l>    catch (Exception)</l>
+<l>        if (Exception[0] != 5282)</l>
+<l>            throw([Exception, 'unknown exception'])</l>
+<l>        endif</l>
+<l>    endtry</l>
+<c>            </c>
+<l>    tuple_add(Path, Filename, FilePath)</l>
+<l>    write_image(ImageReducedWest, 'hobj', 0, FilePath)</l>
+<c>    </c>
+<c>    * increment i</c>
+<l>    i := i + 1</l>
+<l>endwhile</l>
+<c></c>
+<l>close_framegrabber(AcqHandleWest)</l>
+</body>
+<docu id="main">
+<parameters/>
+</docu>
+</procedure>
+</hdevelop>
