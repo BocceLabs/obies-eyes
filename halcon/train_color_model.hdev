@@ -33,11 +33,12 @@
 <c></c>
 <c>*** Bocce - Color Model **********************************************************</c>
 <c>* Create a KNN classifier</c>
+<l>stop()</l>
 <l>FeaturesColor := []</l>
 <l>ClassName := ['blue', 'red']</l>
-<l>create_class_knn (3, KNNHandle)</l>
+<l>create_class_knn (24, KNNHandle)</l>
 <l>Samples := 0</l>
-<c>* Create training samples by grabbing 10 images</c>
+<c>* Create training samples</c>
 <l>for J := 0 to |TrainingClassSubdirectory|-1 by 1</l>
 <c>    * List files in the training class directory</c>
 <l>    tuple_add(Directory, TrainingClassSubdirectory[J], Path)</l>
@@ -72,7 +73,6 @@
 <c>        * Grab the Bocce regions</c>
 <l>        gen_region_contour_xld (Matches_Bocce, Regions_Bocce, 'filled')</l>
 <c>            </c>
-<c>        </c>
 <c>        * Count the ball regions and loop over them        </c>
 <l>        count_obj(Regions_Bocce, Num_Regions)</l>
 <l>        for k := 1 to Num_Regions by 1</l>
@@ -93,7 +93,7 @@
 <l>            tuple_concat(HistoH, HistoS, HistogramFeatureVector)</l>
 <l>            tuple_concat(HistogramFeatureVector, HistoV, HistogramFeatureVector)</l>
 <c>            * Add the Feature Vector to the KNN samples</c>
-<l>            add_sample_class_knn(KNNHandle, HistogramFeatureVector, J)</l>
+<l>            add_sample_class_knn(KNNHandle, [HistogramFeatureVector], J)</l>
 <l>            Samples := Samples + 1</l>
 <l>        endfor</l>
 <l>    endfor</l>
@@ -104,9 +104,86 @@
 <l>train_class_knn(KNNHandle, ['num_trees', 'normalization'], [4, 'true'])</l>
 <c></c>
 <c>* Save the KNN data</c>
-<l>write_class_knn(KNNHandle, 'C:/Users/drhoffma/PycharmProjects/obies-eyes/halcon/knn_model.gnc')</l>
+<l>stop()</l>
+<l>KNN_Filename := 'C:/Users/drhoffma/PycharmProjects/obies-eyes/halcon/knn_model.gnc'</l>
+<l>write_class_knn(KNNHandle, KNN_Filename)</l>
 <c></c>
-<c>* Test the KNN</c>
+<l>stop()</l>
+<c></c>
+<c>********* Test the KNN</c>
+<l>KNN_Filename := 'C:/Users/drhoffma/PycharmProjects/obies-eyes/halcon/knn_model.gnc'</l>
+<l>read_class_knn(KNN_Filename, KNNHandle)</l>
+<c>* Update num matches to 8 balls</c>
+<l>set_generic_shape_model_param (ModelID_Bocce, 'num_matches', 8)</l>
+<l>train_generic_shape_model (ROI_0, ModelID_Bocce)</l>
+<c>* Set the test images directory</c>
+<l>TestingDirectory := 'testing_images/'</l>
+<c>* List files in the training class directory</c>
+<l>list_files(TestingDirectory, ['files'], ImageFiles)</l>
+<c></c>
+<c>* Loop over all files</c>
+<l>for F := 0 to |ImageFiles|-1 by 1</l>
+<l>    read_image (Image, ImageFiles[F])</l>
+<l>    dev_display (Image)</l>
+<c>    </c>
+<c>    * Find Bocces</c>
+<l>    find_generic_shape_model (Image, ModelID_Bocce, MatchResultID_Bocce, NumMatchResult_Bocce)</l>
+<c>    </c>
+<c>    * Bocce Results</c>
+<l>    get_generic_shape_model_result (MatchResultID_Bocce, 'all', 'score', Score)</l>
+<l>    get_generic_shape_model_result_object (Matches_Bocce, MatchResultID_Bocce, 'all', 'contours')</l>
+<l>    try</l>
+<l>        area_center_xld (Matches_Bocce, Area_Bocce, Row_Bocce, Column_Bocce, PointOrder_Bocce)            </l>
+<l>    catch (Exception)</l>
+<l>        continue</l>
+<l>    endtry</l>
+<c></c>
+<c>    * Convert to HSV</c>
+<l>    decompose3 (Image, ImageR, ImageG, ImageB)</l>
+<l>    trans_from_rgb (ImageR, ImageG, ImageB, ImageH, ImageS, ImageV, 'hsv')</l>
+<l>    compose3(ImageH, ImageS, ImageV, ImageHSV)</l>
+<c></c>
+<c>    * Display</c>
+<l>    dev_display(Image)</l>
+<l>    dev_display (Matches_Bocce)</l>
+<c>    </c>
+<c>    * Grab the Bocce regions</c>
+<l>    gen_region_contour_xld (Matches_Bocce, Regions_Bocce, 'filled')</l>
+<c>        </c>
+<c>    * Count the ball regions and loop over them        </c>
+<l>    count_obj(Regions_Bocce, Num_Regions)</l>
+<l>    for k := 1 to Num_Regions by 1</l>
+<c>        * Select the region</c>
+<l>        select_obj(Regions_Bocce, Single, k)</l>
+<c>        * Get the HSV values</c>
+<l>        get_region_points(Single, R, C)</l>
+<l>        get_grayval(ImageH, R, C, GrayH)</l>
+<l>        get_grayval(ImageS, R, C, GrayS)</l>
+<l>        get_grayval(ImageV, R, C, GrayV)</l>
+<c>        * Compute Histogram and form feature vector</c>
+<c>        *tuple_histo_range: https://www.mvtec.com/doc/halcon/13/en/tuple_histo_range.html</c>
+<l>        tuple_histo_range(GrayH, 0, 255, 8, HistoH, BinSize)</l>
+<l>        tuple_histo_range(GrayS, 0, 255, 8, HistoS, BinSize)</l>
+<l>        tuple_histo_range(GrayV, 0, 255, 8, HistoV, BinSize)</l>
+<c>        * TODO Flatten?</c>
+<c>        * Form the 24-D feature vector</c>
+<l>        tuple_concat(HistoH, HistoS, HistogramFeatureVector)</l>
+<l>        tuple_concat(HistogramFeatureVector, HistoV, HistogramFeatureVector)</l>
+<c>        * Classify the Feature Vector</c>
+<l>        classify_class_knn(KNNHandle, HistogramFeatureVector, Result, Rating)</l>
+<c>        * display the result</c>
+<l>        dev_display(Image)</l>
+<l>        dev_display(Single)</l>
+<l>        query_font(WindowHandle, Font)</l>
+<l>        set_font(WindowHandle, 'Luckiest Guy-21')</l>
+<l>        if(Result == 0)</l>
+<l>            dev_disp_text('Team A', 'image', R[0], C[0]+24, 'blue', [], [])</l>
+<l>        elseif(Result == 1)</l>
+<l>            dev_disp_text('Team B', 'image', R[0], C[0]+24, 'red', [], [])</l>
+<l>        endif</l>
+<c>        </c>
+<l>    endfor</l>
+<l>endfor</l>
 </body>
 <docu id="main">
 <parameters/>
