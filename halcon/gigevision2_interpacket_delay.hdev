@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.2" halcon_version="21.05.0.0">
+<procedure name="main">
+<interface/>
+<body>
+<c>* </c>
+<c>* Example how to configure two GigE Vision cameras</c>
+<c>* when they are connected via a single switch to one</c>
+<c>* network interface at the PC.</c>
+<c>* </c>
+<c>* This is done by setting the packet delay such that</c>
+<c>* there is enough space between the packets so the switch is</c>
+<c>* not forced to discard packets which arrive at the same time.</c>
+<c>* Note that this is somehow independent of the average bandwidth</c>
+<c>* of the camera as by default most cameras transfer images in a</c>
+<c>* burst as fast as possible.</c>
+<c>* </c>
+<l>info_framegrabber ('GigEVision2', 'device', Information, Devices)</l>
+<l>if (|Devices| &lt; 2)</l>
+<c>    * This example requires two GigE Vision cameras.</c>
+<l>    stop ()</l>
+<l>endif</l>
+<l as_id="image_acquisition" as_name="Image Acquisition 01" as_grp="[1,2,1]" as_ord="1">*open_framegrabber ('GigEVision2', 0, 0, 0, 0, 0, 0, 'default', -1, 'default', -1, 'false', 'default', Devices[0], 0, -1, AcqHandle1)</l>
+<l>*open_framegrabber ('GigEVision2', 0, 0, 0, 0, 0, 0, 'default', -1, 'default', -1, 'false', 'default', Devices[1], 0, -1, AcqHandle2)</l>
+<c></c>
+<l>open_framegrabber ('GigEVision2', 0, 0, 0, 0, 0, 0, 'progressive', -1, 'default', -1, 'false', 'default', '000f315dab70_AlliedVisionTechnologies_MakoG507C9617', 0, -1, AcqHandle1)</l>
+<l>open_framegrabber ('GigEVision2', 0, 0, 0, 0, 0, 0, 'progressive', -1, 'default', -1, 'false', 'default', '000f315dab39_AlliedVisionTechnologies_MakoG507C9617', 0, -1, AcqHandle2)</l>
+<c></c>
+<c>* </c>
+<l>dev_open_window (0, 0, 512, 512, 'black', WindowHandle1)</l>
+<l>dev_open_window (0, 0, 512, 512, 'black', WindowHandle2)</l>
+<c>* </c>
+<l>get_framegrabber_param (AcqHandle1, 'GevSCPSPacketSize', PacketSize1)</l>
+<l>get_framegrabber_param (AcqHandle2, 'GevSCPSPacketSize', PacketSize2)</l>
+<c>* </c>
+<c>* Determine a packet delay that allows the cameras to transfer packets alternating.</c>
+<c>* The transfer time per packet calculates as follows:</c>
+<c>* speed = 1 Gbit/s = 1 bit/ns</c>
+<c>* size = PacketSize byte = 8*PacketSize bit</c>
+<c>* time = size/speed = 8*PacketSize ns</c>
+<c>* Generously, give the other camera twice as much time as it needs.</c>
+<l>InterpacketDelay1 := 2 * 8 * PacketSize2</l>
+<l>InterpacketDelay2 := 2 * 8 * PacketSize1</l>
+<c>* </c>
+<l>get_time_resolution (AcqHandle1, TimeResolution1)</l>
+<l>set_framegrabber_param (AcqHandle1, 'GevSCPD', InterpacketDelay1 / TimeResolution1)</l>
+<l>set_framegrabber_param (AcqHandle1, '[Stream]StreamBufferHandlingMode', 'OldestFirstOverwrite')</l>
+<c>* </c>
+<l>get_time_resolution (AcqHandle2, TimeResolution2)</l>
+<l>set_framegrabber_param (AcqHandle2, 'GevSCPD', InterpacketDelay2 / TimeResolution2)</l>
+<l>set_framegrabber_param (AcqHandle2, '[Stream]StreamBufferHandlingMode', 'OldestFirstOverwrite')</l>
+<c>* </c>
+<c>* Deactivate HDevelop update for better performance.</c>
+<l>dev_update_off ()</l>
+<l as_id="image_acquisition" as_name="Image Acquisition 01" as_grp="[2,1]" as_ord="1">grab_image_start (AcqHandle1, -1)</l>
+<l>grab_image_start (AcqHandle2, -1)</l>
+<l as_id="image_acquisition" as_name="Image Acquisition 01" as_grp="[2,2]" as_ord="1">while (true)</l>
+<l>    dev_set_window (WindowHandle1)</l>
+<l as_id="image_acquisition" as_name="Image Acquisition 01" as_grp="[2,3]" as_ord="1">    grab_image_async (Image1, AcqHandle1, -1)</l>
+<l>    dev_display (Image1)</l>
+<c>    * </c>
+<l>    dev_set_window (WindowHandle2)</l>
+<l>    grab_image_async (Image2, AcqHandle2, -1)</l>
+<l>    dev_display (Image2)</l>
+<l as_id="image_acquisition" as_name="Image Acquisition 01" as_grp="[3,1]" as_ord="1">endwhile</l>
+<c>* </c>
+<l>dev_close_window ()</l>
+<l>dev_close_window ()</l>
+<c>* </c>
+<l as_id="image_acquisition" as_name="Image Acquisition 01" as_grp="[4,1]" as_ord="1">close_framegrabber (AcqHandle1)</l>
+<l>close_framegrabber (AcqHandle2)</l>
+</body>
+<docu id="main">
+<parameters/>
+</docu>
+</procedure>
+<procedure name="get_time_resolution">
+<interface>
+<ic>
+<par name="AcqHandle" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="TimeResolution" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>try</l>
+<c>    * As of SFNC 2.1, the increment of the TimestampLatchValue feature</c>
+<c>    * must correspond to the resolution of the devices's timestamp in nanoseconds.</c>
+<l>    get_framegrabber_param (AcqHandle, 'TimestampLatchValue_range', TimestampLatchValueRange)</l>
+<l>    TimeResolution := TimestampLatchValueRange[2]</l>
+<l>catch (Exception)</l>
+<l>    try</l>
+<c>        * Before, GevTimestampTickFrequency was used to indicate</c>
+<c>        * the number of timestamp ticks in 1 second (frequency in Hz).</c>
+<l>        get_framegrabber_param (AcqHandle, 'GevTimestampTickFrequency', GevTimestampTickFrequency)</l>
+<l>        TimeResolution := 1 / (GevTimestampTickFrequency * 1e-9)</l>
+<l>    catch (Exception)</l>
+<c>        * This camera's time resolution could not be determined.</c>
+<l>        stop ()</l>
+<l>    endtry</l>
+<l>endtry</l>
+<l>return ()</l>
+</body>
+<docu id="get_time_resolution">
+<parameters>
+<parameter id="AcqHandle"/>
+<parameter id="TimeResolution"/>
+</parameters>
+</docu>
+</procedure>
+</hdevelop>

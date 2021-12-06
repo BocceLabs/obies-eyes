@@ -64,7 +64,7 @@
 <c></c>
 <c>*** Pallino - Shape Model ********************************************************</c>
 <c>* Pallino - model from contour</c>
-<l>PallinoRadius := 10</l>
+<l>PallinoRadius := 9.5</l>
 <l>gen_circle_contour_xld (ROI_1, 1365, 1095, PallinoRadius, 0, 6.28318, 'positive', 1)</l>
 <l>create_generic_shape_model (ModelID_Pallino)</l>
 <c>* model train param</c>
@@ -82,93 +82,113 @@
 <c></c>
 <c></c>
 <c>*** Bocce - Color Model **********************************************************</c>
-<c>* Create a KNN classifier</c>
-<l>FeaturesColor := []</l>
-<l>ClassName := ['blue', 'red']</l>
-<l>create_class_knn (3, KNNHandle)</l>
-<c>* Create training samples by grabbing 10 images</c>
-<l>for I := 1 to 10 by 1</l>
-<l>    dev_disp_text ('Arrange single class of balls and indicate class number from blue=0 and red=1', 'window', 'top', 'left', 'black', [], [])</l>
-<c>    * Grab a character (either 0 or 1) from the keyboard</c>
-<l>    read_char(WindowHandle, character, code)</l>
-<c>    * Convert the character to an integer</c>
-<l>    tuple_number(character, ClassNumber)</l>
-<l>    stop()</l>
-<c>        </c>
-<c>    * Grab a frame</c>
-<l>    grab_image_async (Image, AcqHandleWest, -1)</l>
-<l>    reduce_domain(Image, Rectangle, Image)</l>
-<c>    </c>
-<c>    </c>
-<c>    * Find Bocces</c>
-<l>    find_generic_shape_model (Image, ModelID_Bocce, MatchResultID_Bocce, NumMatchResult_Bocce)</l>
-<c>    </c>
-<c>    * Bocce Results</c>
-<l>    get_generic_shape_model_result (MatchResultID_Bocce, 'all', 'score', Score)</l>
-<l>    get_generic_shape_model_result_object (Matches_Bocce, MatchResultID_Bocce, 'all', 'contours')</l>
-<l>    area_center_xld (Matches_Bocce, Area_Bocce, Row_Bocce, Column_Bocce, PointOrder_Bocce)</l>
-<c>    </c>
-<c>    * Convert to HSV</c>
-<l>    decompose3 (Image, ImageR, ImageG, ImageB)</l>
-<l>    trans_from_rgb (ImageR, ImageG, ImageB, ImageH, ImageS, ImageV, 'hsv')</l>
-<l>    compose3(ImageH, ImageS, ImageV, ImageHSV)</l>
+<l>KNN_Filename := 'C:/Users/drhoffma/PycharmProjects/obies-eyes/halcon/knn_model.gnc'</l>
+<l>read_class_knn(KNN_Filename, KNNHandle)</l>
 <c></c>
-<c>    * Display</c>
-<l>    dev_display(ImageHSV)</l>
-<l>    dev_display (Matches_Bocce)</l>
-<c>    </c>
-<c>    * Grab the Bocce regions</c>
-<l>    gen_region_contour_xld (Matches_Bocce, Regions_Bocce, 'filled')</l>
-<c>        </c>
-<c>    * STUCK HERE</c>
-<c>    * Extract the gray values</c>
-<l>    count_obj(Regions_Bocce, Num_Regions)</l>
-<l>    for j := 1 to Num_Regions by 1</l>
-<l>        select_obj(Regions_Bocce, Single, j)</l>
-<l>        get_region_points(Single, R, C)</l>
-<l>        get_grayval(ImageH, R, C, GrayH)</l>
-<l>        get_grayval(ImageS, R, C, GrayS)</l>
-<l>        get_grayval(ImageV, R, C, GrayV)</l>
-<c>                </c>
-<c>        * Pass the HSV regions to the classifier</c>
-<l>        for i := 0 to |GrayH|-1 by 1</l>
-<c>            * Add a sammple to the KNN classifier</c>
-<l>            add_sample_class_knn(KNNHandle, [GrayH[i], GrayS[i], GrayV[i]], ClassNumber)</l>
-<l>        endfor    </l>
-<l>    endfor</l>
-<c>    </c>
-<c>    * Press 'F5' to continue</c>
-<l>    disp_continue_message (WindowHandle, 'black', 'true')</l>
-<l>    * disp_continue_button(WindowHandle)</l>
-<l>    stop()</l>
-<l>endfor</l>
+<c>* set up a font</c>
+<l>query_font(WindowHandle, Font)</l>
+<l>set_font(WindowHandle, 'Luckiest Guy-14')</l>
 <c></c>
-<c>* Create the Search Trees for the KNN Classifier</c>
-<l>train_class_knn(KNNHandle, ['num_trees', 'normalization'], [4, 'true'])</l>
+<c>* set up court roi</c>
+<l>gen_rectangle1(Rectangle, 1140, 660, 1470, 1625)</l>
 <c></c>
-<c>* Save the KNN data</c>
-<l>write_class_knn(KNNHandle, 'C:/Users/drhoffma/PycharmProjects/obies-eyes/halcon/knn_model.gnc')</l>
+<c>* Constants</c>
+<l>PixelsPerInch := 132/12</l>
 <c></c>
+<l>stop()</l>
+<c></c>
+<c>*** Loop over camera frames *****************************************************</c>
 <l>while (true)</l>
 <c>    * Grab a frame</c>
 <l>    grab_image_async (FullImage, AcqHandleWest, -1)</l>
 <l>    reduce_domain(FullImage, Rectangle, Image)</l>
+<l>    dev_display(Image)</l>
 <c>    </c>
 <c>    * Find Bocces and Pallinos</c>
 <l>    find_generic_shape_model (Image, ModelID_Bocce, MatchResultID_Bocce, NumMatchResult_Bocce)</l>
 <l>    find_generic_shape_model (Image, ModelID_Pallino, MatchResultID_Pallino, NumMatchResult_Pallino)</l>
 <c></c>
-<c>    * Bocce Results</c>
-<l>    get_generic_shape_model_result (MatchResultID_Bocce, 'all', 'score', Score)</l>
-<l>    get_generic_shape_model_result_object (Matches_Bocce, MatchResultID_Bocce, 'all', 'contours')</l>
-<l>    area_center_xld (Matches_Bocce, Area_Bocce, Row_Bocce, Column_Bocce, PointOrder_Bocce)</l>
-<c>    </c>
 <c>    * Pallino Results</c>
 <l>    get_generic_shape_model_result (MatchResultID_Pallino, 'all', 'score', Score)</l>
 <l>    get_generic_shape_model_result_object (Matches_Pallino, MatchResultID_Pallino, 'all', 'contours')</l>
-<l>    area_center_xld (Matches_Pallino, Area_Pallino, Row_Pallino, Column_Pallino, PointOrder_Pallino)</l>
 <c>    </c>
-<l>    dev_display (Image)</l>
+<c>    * Bocce Results</c>
+<l>    get_generic_shape_model_result (MatchResultID_Bocce, 'all', 'score', Score)</l>
+<l>    get_generic_shape_model_result_object (Matches_Bocce, MatchResultID_Bocce, 'all', 'contours')</l>
+<c>    </c>
+<c>    * Try to find the pallino</c>
+<l>    try</l>
+<l>        area_center_xld (Matches_Pallino, Area_Pallino, Row_Pallino, Column_Pallino, PointOrder_Pallino)</l>
+<l>        dev_disp_text('P', 'image', Row_Pallino[0], Column_Pallino[0]+24, 'black', ['box_color'], ['white'])</l>
+<l>    catch (Exception)</l>
+<l>        *dev_disp_text('No Pallino', 'window', 10, 'left', 'red', ['box_color'], ['white'])</l>
+<l>        PallinoFound := false</l>
+<l>    endtry</l>
+<l>    PallinoFound := true</l>
+<c>    </c>
+<c>    * Try to find at least one bocce</c>
+<l>    try</l>
+<l>        area_center_xld (Matches_Pallino, Area_Pallino, Row_Pallino, Column_Pallino, PointOrder_Pallino)</l>
+<l>        area_center_xld (Matches_Bocce, Area_Bocce, Row_Bocce, Column_Bocce, PointOrder_Bocce)</l>
+<l>    catch (Exception)</l>
+<l>        *dev_disp_text('No Bocces', 'window', 10, 'right', 'red', ['box_color'], ['white'])</l>
+<l>        continue</l>
+<l>    endtry</l>
+<l>    *dev_clear_window()</l>
+<c></c>
+<c>    * Bocce team distinguisher</c>
+<c>    * Convert to HSV</c>
+<l>    decompose3 (Image, ImageR, ImageG, ImageB)</l>
+<l>    trans_from_rgb (ImageR, ImageG, ImageB, ImageH, ImageS, ImageV, 'hsv')</l>
+<l>    compose3(ImageH, ImageS, ImageV, ImageHSV)</l>
+<c>    </c>
+<c>    * Grab the Bocce regions</c>
+<l>    gen_region_contour_xld (Matches_Bocce, Regions_Bocce, 'filled')</l>
+<c>        </c>
+<c>    * Count the ball regions and loop over them        </c>
+<l>    count_obj(Regions_Bocce, Num_Regions)</l>
+<l>    for k := 1 to Num_Regions by 1</l>
+<c>        * Select the region</c>
+<l>        select_obj(Regions_Bocce, Single, k)</l>
+<c>        * Get the HSV values</c>
+<l>        get_region_points(Single, R, C)</l>
+<l>        get_grayval(ImageH, R, C, GrayH)</l>
+<l>        get_grayval(ImageS, R, C, GrayS)</l>
+<l>        get_grayval(ImageV, R, C, GrayV)</l>
+<c>        * Compute Histogram and form feature vector</c>
+<c>        *tuple_histo_range: https://www.mvtec.com/doc/halcon/13/en/tuple_histo_range.html</c>
+<l>        tuple_histo_range(GrayH, 0, 255, 8, HistoH, BinSize)</l>
+<l>        tuple_histo_range(GrayS, 0, 255, 8, HistoS, BinSize)</l>
+<l>        tuple_histo_range(GrayV, 0, 255, 8, HistoV, BinSize)</l>
+<c>        * TODO Flatten?</c>
+<c>        * Form the 24-D feature vector</c>
+<l>        tuple_concat(HistoH, HistoS, HistogramFeatureVector)</l>
+<l>        tuple_concat(HistogramFeatureVector, HistoV, HistogramFeatureVector)</l>
+<c>        * Classify the Feature Vector</c>
+<l>        classify_class_knn(KNNHandle, HistogramFeatureVector, Result, Rating)</l>
+<c>        * display the result</c>
+<c>        </c>
+<c>        * Display Ball IDs</c>
+<c>        </c>
+<l>        if(Result == 0)</l>
+<l>            dev_disp_text('A', 'image', R[0], C[0]+24, 'blue', ['box_color'], ['white'])</l>
+<l>            if(PallinoFound)</l>
+<l>                distance_pp(Row_Pallino[0], Column_Pallino[0], R[0], C[0], PallinoDistPx)</l>
+<l>                PallinoDistIn := PallinoDistPx / PixelsPerInch</l>
+<l>                dev_disp_text('pixels: ' + PallinoDistPx $ '10.1f' + '\ninches: ' + PallinoDistIn $ '10.1f', 'window', 40, 'right', 'blue', ['box_color'], ['white'])</l>
+<l>            endif</l>
+<l>        elseif(Result == 1)</l>
+<l>            dev_disp_text('B', 'image', R[0], C[0]+24, 'red', ['box_color'], ['white'])</l>
+<l>            if(PallinoFound)</l>
+<l>                distance_pp(Row_Pallino[0], Column_Pallino[0], R[0], C[0], PallinoDistPx)</l>
+<l>                PallinoDistIn := PallinoDistPx / PixelsPerInch</l>
+<l>                dev_disp_text('pixels: ' + PallinoDistPx $ '10.1f' + '\ninches: ' + PallinoDistIn $ '10.1f', 'window', 80, 'right', 'red', ['box_color'], ['white'])</l>
+<c></c>
+<l>            endif</l>
+<l>        endif</l>
+<l>    endfor</l>
+<c>    </c>
+<l>    *dev_display (Image)</l>
 <l>    dev_display (Matches_Bocce)</l>
 <l>    dev_display(Matches_Pallino)</l>
 <c>    </c>
