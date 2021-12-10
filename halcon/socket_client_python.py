@@ -8,9 +8,9 @@ PORT = 60000
 
 """
 Expects socket data in this format:
-P=[None],A=[None,None,None,None],B=[None,None,None,None]
+P=[None],A=[None;None;None;None],B=[None;None;None;None]
     -or-
-P=[(517.4,28.7)],A=[(1236.8, 483.6);None;None;None],B=[(843.2,568.9),(246.4,523.9),None;None]
+P=[(517.4,28.7)],A=[(1236.8, 483.6);None;None;None],B=[(843.2,568.9);(246.4,523.9);None;None]
 """
 
 # receive data
