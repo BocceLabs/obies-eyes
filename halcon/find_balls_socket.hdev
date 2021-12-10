@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.2" halcon_version="21.11.0.0">
+<procedure name="main">
+<interface/>
+<body>
+<l>dev_update_off ()</l>
+<c>* Camera connections</c>
+<l>open_framegrabber ('GigEVision2', 0, 0, 0, 0, 0, 0, 'progressive', -1, 'default', -1, 'false', 'default', '000f315dab70_AlliedVisionTechnologies_MakoG507C9617', 0, -1, AcqHandleWest)</l>
+<l>*open_framegrabber ('GigEVision2', 0, 0, 0, 0, 0, 0, 'progressive', -1, 'default', -1, 'false', 'default', '000f315dab39_AlliedVisionTechnologies_MakoG507C9617', 0, -1, AcqHandleEast)</l>
+<c>* Camera Parameters - West</c>
+<l>set_framegrabber_param (AcqHandleWest, 'TriggerSelector', 'FrameStart')</l>
+<l>set_framegrabber_param (AcqHandleWest, 'TriggerMode', 'On')</l>
+<l>set_framegrabber_param (AcqHandleWest, 'TriggerSource', 'Freerun')</l>
+<l>set_framegrabber_param (AcqHandleWest, 'ExposureAuto', 'Continuous')</l>
+<l>set_framegrabber_param (AcqHandleWest, 'ExposureMode', 'Timed')</l>
+<c>* Camera Parameters - East</c>
+<l>*set_framegrabber_param (AcqHandleEast, 'TriggerSelector', 'FrameStart')</l>
+<l>*set_framegrabber_param (AcqHandleEast, 'TriggerMode', 'On')</l>
+<l>*set_framegrabber_param (AcqHandleEast, 'TriggerSource', 'Freerun')</l>
+<l>*set_framegrabber_param (AcqHandleEast, 'ExposureAuto', 'Continuous')</l>
+<l>*set_framegrabber_param (AcqHandleEast, 'ExposureMode', 'Timed')</l>
+<l>*get_framegrabber_param (AcqHandleEast, '[Stream]GevStreamActiveEngine', FrameGrabberStreamValue)</l>
+<c>* Start grabbing frames</c>
+<l>grab_image_start (AcqHandleWest, -1)</l>
+<l>*grab_image_start (AcqHandleEast, -1)</l>
+<c></c>
+<c>*** Save a frame for support request ********************************************</c>
+<c>* Grab a frame</c>
+<l>grab_image_async (ImageWest, AcqHandleWest, -1)</l>
+<l>*grab_image_async (ImageEast, AcqHandleEast, -1)</l>
+<c></c>
+<c>* Reduce the domain</c>
+<l>gen_rectangle1(Rectangle, 1140, 660, 1470, 1625)</l>
+<l>reduce_domain(ImageWest, Rectangle, ImageReducedWest)</l>
+<l>*reduce_domain(ImageEast, Rectangle, ImageReducedEast)</l>
+<c>* Save the image</c>
+<l>write_image(ImageReducedWest, 'hobj', 0, 'Bocce_Balls_West.hobj')</l>
+<l>*write_image(ImageReducedEast, 'hobj', 0, 'Bocce_Balls_East.hobj')</l>
+<c>* Read the image</c>
+<l>*read_image (Image, 'Bocce_Balls_West.hobj')</l>
+<l>*read_image (Image, 'Bocce_Balls_East.hobj')</l>
+<c>*********************************************************************************</c>
+<c></c>
+<l>dev_get_window (WindowHandle)</l>
+<l>dev_set_line_width (2)</l>
+<l>dev_clear_window()</l>
+<c></c>
+<c>*** Bocce - Shape Model *********************************************************</c>
+<c>* Bocce - model from contour</c>
+<l>BocceRadius := 24</l>
+<l>gen_circle_contour_xld (ROI_0, 1335, 1163, BocceRadius, 0, 6.28318, 'positive', 1)</l>
+<l>create_generic_shape_model (ModelID_Bocce)</l>
+<c>* model train param</c>
+<l>set_generic_shape_model_param (ModelID_Bocce, 'metric', 'ignore_color_polarity')</l>
+<l>set_generic_shape_model_param (ModelID_Bocce, 'angle_start', 0.0)</l>
+<l>set_generic_shape_model_param (ModelID_Bocce, 'angle_end', 0.0)</l>
+<c>* train model</c>
+<l>train_generic_shape_model (ROI_0, ModelID_Bocce)</l>
+<c>* model search param</c>
+<l>set_generic_shape_model_param (ModelID_Bocce, 'max_deformation', 3)</l>
+<l>set_generic_shape_model_param (ModelID_Bocce, 'min_score', 0.8)</l>
+<l>set_generic_shape_model_param (ModelID_Bocce, 'max_overlap', 0.1)</l>
+<l>set_generic_shape_model_param (ModelID_Bocce, 'min_contrast', 22)</l>
+<l>set_generic_shape_model_param (ModelID_Bocce, 'num_matches', 8)</l>
+<c></c>
+<c>*** Pallino - Shape Model ********************************************************</c>
+<c>* Pallino - model from contour</c>
+<l>PallinoRadius := 9.5</l>
+<l>gen_circle_contour_xld (ROI_1, 1365, 1095, PallinoRadius, 0, 6.28318, 'positive', 1)</l>
+<l>create_generic_shape_model (ModelID_Pallino)</l>
+<c>* model train param</c>
+<l>set_generic_shape_model_param (ModelID_Pallino, 'metric', 'ignore_color_polarity')</l>
+<l>set_generic_shape_model_param (ModelID_Pallino, 'angle_start', 0.0)</l>
+<l>set_generic_shape_model_param (ModelID_Pallino, 'angle_end', 0.0)</l>
+<c>* train model</c>
+<l>train_generic_shape_model (ROI_1, ModelID_Pallino)</l>
+<c>* model search param</c>
+<l>set_generic_shape_model_param (ModelID_Pallino, 'max_deformation', 3)</l>
+<l>set_generic_shape_model_param (ModelID_Pallino, 'min_score', 0.8)</l>
+<l>set_generic_shape_model_param (ModelID_Pallino, 'max_overlap', 0.1)</l>
+<l>set_generic_shape_model_param (ModelID_Pallino, 'min_contrast', 22)</l>
+<l>set_generic_shape_model_param (ModelID_Pallino, 'num_matches', 1)</l>
+<c></c>
+<c></c>
+<c>*** Bocce - Color Model **********************************************************</c>
+<l>KNN_Filename := 'knn_model.gnc'</l>
+<l>read_class_knn(KNN_Filename, KNNHandle)</l>
+<c></c>
+<c>* set up a font</c>
+<l>query_font(WindowHandle, Font)</l>
+<l>set_font(WindowHandle, 'Luckiest Guy-19')</l>
+<c></c>
+<c>* set up court roi</c>
+<l>gen_rectangle1(Rectangle, 1140, 660, 1470, 1625)</l>
+<c></c>
+<c>* Constants</c>
+<l>PixelsPerInch := 132/12</l>
+<c></c>
+<c>*** Start a socket connection ***************************************************</c>
+<l>open_socket_accept(60000, ['protocol'], ['TCP4'], AcceptingSocket)</l>
+<c>* Busy wait for an incoming connection</c>
+<l>dev_error_var (Error, 1)</l>
+<l>dev_set_check ('~give_error')</l>
+<l>OpenStatus := 5</l>
+<l>while (OpenStatus != 2)</l>
+<l>    dev_disp_text ('Open the Python Socket client', 'window', 'center', 'center', 'black', [], [])</l>
+<l>    socket_accept_connect (AcceptingSocket, 'false', Socket)</l>
+<l>    OpenStatus := Error</l>
+<l>    wait_seconds (0.5)</l>
+<l>endwhile</l>
+<l>dev_set_check ('give_error')</l>
+<l>dev_clear_window()</l>
+<l>dev_disp_text ('Connected!', 'window', 'center', 'center', 'black', [], [])</l>
+<l>stop()</l>
+<l>dev_clear_window()</l>
+<c></c>
+<c>*** Loop over camera frames *****************************************************</c>
+<l>while (true)</l>
+<c>    * Clear the Socket String</c>
+<c>    * P=[None],A=[None,None,None,None],B=[None,None,None,None]</c>
+<l>    P := 'None'</l>
+<l>    A1 := 'None'</l>
+<l>    A2 := 'None'</l>
+<l>    A3 := 'None'</l>
+<l>    A4 := 'None'</l>
+<l>    B1 := 'None'</l>
+<l>    B2 := 'None'</l>
+<l>    B3 := 'None'</l>
+<l>    B4 := 'None'</l>
+<c>    </c>
+<c>    </c>
+<c>    * Grab a frame</c>
+<l>    grab_image_async (FullImage, AcqHandleWest, -1)</l>
+<l>    reduce_domain(FullImage, Rectangle, Image)</l>
+<l>    dev_display(Image)</l>
+<c>    </c>
+<c>    * Find Bocces and Pallinos</c>
+<l>    find_generic_shape_model (Image, ModelID_Bocce, MatchResultID_Bocce, NumMatchResult_Bocce)</l>
+<l>    find_generic_shape_model (Image, ModelID_Pallino, MatchResultID_Pallino, NumMatchResult_Pallino)</l>
+<c></c>
+<c>    * Pallino Results</c>
+<l>    get_generic_shape_model_result (MatchResultID_Pallino, 'all', 'score', Score)</l>
+<l>    get_generic_shape_model_result_object (Matches_Pallino, MatchResultID_Pallino, 'all', 'contours')</l>
+<c>    </c>
+<c>    * Bocce Results</c>
+<l>    get_generic_shape_model_result (MatchResultID_Bocce, 'all', 'score', Score)</l>
+<l>    get_generic_shape_model_result_object (Matches_Bocce, MatchResultID_Bocce, 'all', 'contours')</l>
+<c>    </c>
+<c>    * Try to find the pallino</c>
+<l>    try</l>
+<l>        area_center_xld (Matches_Pallino, Area_Pallino, Row_Pallino, Column_Pallino, PointOrder_Pallino)</l>
+<l>        *dev_disp_text('P', 'image', Row_Pallino[0], Column_Pallino[0]+24, 'black', ['box_color'], ['white'])</l>
+<l>        PallinoFound := true</l>
+<l>        tuple_string(Column_Pallino[0], '.1f', p_x_str)</l>
+<l>        tuple_string(Row_Pallino[0], '.1f', p_y_str)</l>
+<l>        P := '(' + p_x_str + ',' + p_y_str + ')'</l>
+<l>    catch (Exception)</l>
+<l>        *dev_disp_text('No Pallino', 'window', 10, 'left', 'red', ['box_color'], ['white'])</l>
+<l>        PallinoFound := false</l>
+<l>    endtry</l>
+<c>    </c>
+<c>    * Try to find at least one bocce</c>
+<l>    try</l>
+<l>        area_center_xld (Matches_Bocce, Area_Bocce, Row_Bocce, Column_Bocce, PointOrder_Bocce)        </l>
+<l>    catch (Exception)</l>
+<l>        continue</l>
+<l>    endtry</l>
+<c></c>
+<c>    * Bocce team distinguisher</c>
+<c>    * Convert to HSV</c>
+<l>    decompose3 (Image, ImageR, ImageG, ImageB)</l>
+<l>    trans_from_rgb (ImageR, ImageG, ImageB, ImageH, ImageS, ImageV, 'hsv')</l>
+<l>    compose3(ImageH, ImageS, ImageV, ImageHSV)</l>
+<c>    </c>
+<c>    * Grab the Bocce regions</c>
+<l>    gen_region_contour_xld (Matches_Bocce, Regions_Bocce, 'filled')</l>
+<c>        </c>
+<c>    * Count the ball regions and loop over them        </c>
+<l>    count_obj(Regions_Bocce, Num_Regions)</l>
+<c>    </c>
+<l>    for k := 1 to Num_Regions by 1</l>
+<c>        * Select the region</c>
+<l>        select_obj(Regions_Bocce, Single, k)</l>
+<c>        * Get the HSV values</c>
+<l>        get_region_points(Single, R, C)</l>
+<l>        get_grayval(ImageH, R, C, GrayH)</l>
+<l>        get_grayval(ImageS, R, C, GrayS)</l>
+<l>        get_grayval(ImageV, R, C, GrayV)</l>
+<c>        * Compute Histogram and form feature vector</c>
+<c>        *tuple_histo_range: https://www.mvtec.com/doc/halcon/13/en/tuple_histo_range.html</c>
+<l>        tuple_histo_range(GrayH, 0, 255, 8, HistoH, BinSize)</l>
+<l>        tuple_histo_range(GrayS, 0, 255, 8, HistoS, BinSize)</l>
+<l>        tuple_histo_range(GrayV, 0, 255, 8, HistoV, BinSize)</l>
+<c>        * TODO Flatten?</c>
+<c>        * Form the 24-D feature vector</c>
+<l>        tuple_concat(HistoH, HistoS, HistogramFeatureVector)</l>
+<l>        tuple_concat(HistogramFeatureVector, HistoV, HistogramFeatureVector)</l>
+<c>        * Classify the Feature Vector</c>
+<l>        classify_class_knn(KNNHandle, HistogramFeatureVector, Result, Rating)</l>
+<c>        * display the result</c>
+<c>        </c>
+<c>        * Display Ball IDs</c>
+<c>        </c>
+<c>        * Team A ("Red")</c>
+<l>        if(Result == 1)</l>
+<l>            *dev_disp_text('A', 'image', R[0], C[0]+24, 'blue', ['box_color'], ['white'])</l>
+<c>            </c>
+<c>            * Determine the distance and display it</c>
+<l>            *if(PallinoFound)</l>
+<l>            *    distance_pp(Row_Pallino[0], Column_Pallino[0], R[0], C[0], PallinoDistPx)</l>
+<l>            *    PallinoDistIn := PallinoDistPx / PixelsPerInch</l>
+<l>            *    text := 'pixels: ' + PallinoDistPx $ '10.1f' + '\ninches: ' + PallinoDistIn $ '10.1f'</l>
+<l>            *    text := PallinoDistIn $ '10.1f'</l>
+<l>            *    dev_disp_text(text, 'image', R[0], C[0] + 24, 'red', ['box_color'], ['white'])</l>
+<l>            *endif</l>
+<c>            </c>
+<c>            * Add the ball</c>
+<l>            if (A1 == 'None')</l>
+<l>                try</l>
+<l>                    tuple_string(C[0], '.1f', a1_x_str)</l>
+<l>                    tuple_string(R[0], '.1f', a1_y_str)</l>
+<l>                    A1 := '(' + p_x_str + ',' + p_y_str + ')'</l>
+<l>                catch (Exception)</l>
+<l>                    A1 := 'None'</l>
+<l>                endtry</l>
+<l>            elseif (A2 == 'None')</l>
+<l>                try</l>
+<l>                    tuple_string(C[0], '.1f', a1_x_str)</l>
+<l>                    tuple_string(R[0], '.1f', a1_y_str)</l>
+<l>                    A2 := '(' + p_x_str + ',' + p_y_str + ')'</l>
+<l>                catch (Exception)</l>
+<l>                    A2 := 'None'</l>
+<l>                endtry</l>
+<l>            elseif (A3 == 'None')</l>
+<l>                try</l>
+<l>                    tuple_string(C[0], '.1f', a1_x_str)</l>
+<l>                    tuple_string(R[0], '.1f', a1_y_str)</l>
+<l>                    A3 := '(' + p_x_str + ',' + p_y_str + ')'</l>
+<l>                catch (Exception)</l>
+<l>                    A3 := 'None'</l>
+<l>                endtry</l>
+<l>            elseif (A4 == 'None')</l>
+<l>                try</l>
+<l>                    tuple_string(C[0], '.1f', a1_x_str)</l>
+<l>                    tuple_string(R[0], '.1f', a1_y_str)</l>
+<l>                    A4 := '(' + p_x_str + ',' + p_y_str + ')'</l>
+<l>                catch (Exception)</l>
+<l>                    A4 := 'None'</l>
+<l>                endtry</l>
+<l>            endif</l>
+<c>            </c>
+<c>        * Team B ("Blue")</c>
+<l>        elseif(Result == 0)</l>
+<l>            *dev_disp_text('B', 'image', R[0], C[0]+24, 'red', ['box_color'], ['white'])</l>
+<c>            </c>
+<c>            * Determine the distance and display it</c>
+<l>            *if(PallinoFound)</l>
+<l>            *    distance_pp(Row_Pallino[0], Column_Pallino[0], R[0], C[0], PallinoDistPx)</l>
+<l>            *    PallinoDistIn := PallinoDistPx / PixelsPerInch</l>
+<c>            *    *text := 'pixels: ' + PallinoDistPx $ '10.1f' + '\ninches: ' + PallinoDistIn $ '10.1f'</c>
+<l>            *    text := PallinoDistIn $ '10.1f'</l>
+<l>            *    dev_disp_text(text, 'image', R[0], C[0] + 24, 'blue', ['box_color'], ['white'])</l>
+<l>            *endif</l>
+<c>            </c>
+<c>            * Add the ball</c>
+<l>            if (B1 == 'None')</l>
+<l>                try</l>
+<l>                    tuple_string(C[0], '.1f', a1_x_str)</l>
+<l>                    tuple_string(R[0], '.1f', a1_y_str)</l>
+<l>                    A1 := '(' + p_x_str + ',' + p_y_str + ')'</l>
+<l>                catch (Exception)</l>
+<l>                    B1 := 'None'</l>
+<l>                endtry</l>
+<l>            elseif (B2 == 'None')</l>
+<l>                try</l>
+<l>                    tuple_string(C[0], '.1f', a1_x_str)</l>
+<l>                    tuple_string(R[0], '.1f', a1_y_str)</l>
+<l>                    B2 := '(' + p_x_str + ',' + p_y_str + ')'</l>
+<l>                catch (Exception)</l>
+<l>                    B2 := 'None'</l>
+<l>                endtry</l>
+<l>            elseif (B3 == 'None')</l>
+<l>                try</l>
+<l>                    tuple_string(C[0], '.1f', a1_x_str)</l>
+<l>                    tuple_string(R[0], '.1f', a1_y_str)</l>
+<l>                    B3 := '(' + p_x_str + ',' + p_y_str + ')'</l>
+<l>                catch (Exception)</l>
+<l>                    B3 := 'None'</l>
+<l>                endtry</l>
+<l>            elseif (B4 == 'None')</l>
+<l>                try</l>
+<l>                    tuple_string(C[0], '.1f', a1_x_str)</l>
+<l>                    tuple_string(R[0], '.1f', a1_y_str)</l>
+<l>                    B4 := '(' + p_x_str + ',' + p_y_str + ')'</l>
+<l>                catch (Exception)</l>
+<l>                    B4 := 'None'</l>
+<l>                endtry</l>
+<l>            endif</l>
+<l>        endif</l>
+<l>    endfor</l>
+<c>    </c>
+<c>    * Prepare the data string for sending to the Python socket client</c>
+<c>    </c>
+<c>    </c>
+<c>    * Send data over the Socket connection</c>
+<l>    SocketData := 'P=[' + P + '],' + \
+                  'A=[' + A1 + ';' + A2 + ';' + A3 + ';' + A4 + '],' + \
+                  'B=[' + B1 + ';' + B2 + ';' + B3 + ';' + B4 + ']'</l>
+<l>    send_data(Socket, 'A', SocketData,[])</l>
+<l>    receive_data(Socket, 'z', Data, From)</l>
+<l>    tuple_equal(Data, 'bocce', Equal)</l>
+<l>    if (not Equal)</l>
+<l>        dev_disp_text ('Socket error' + Data, 'window', 'top', 'left', 'black', [], [])</l>
+<l>        stop()</l>
+<l>    endif</l>
+<c>    </c>
+<l>    *dev_display (Image)</l>
+<l>    dev_display (Matches_Bocce)</l>
+<l>    dev_display(Matches_Pallino)</l>
+<c>    </c>
+<l>endwhile</l>
+<c></c>
+<c>* Cleanup</c>
+<l>close_framegrabber (AcqHandleWest)</l>
+<l>close_socket(Socket)</l>
+<l>close_socket(AcceptingSocket)</l>
+<c></c>
+</body>
+<docu id="main">
+<parameters/>
+</docu>
+</procedure>
+<procedure name="get_features">
+<interface>
+<io>
+<par name="ObjectSelected" base_type="iconic" dimension="0"/>
+</io>
+<ic>
+<par name="WindowHandle" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="Circularity" base_type="ctrl" dimension="0"/>
+<par name="Area" base_type="ctrl" dimension="0"/>
+<par name="Row" base_type="ctrl" dimension="0"/>
+<par name="Column" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>color (ObjectSelected, Circularity)</l>
+<l>area_center (ObjectSelected, Area, Row, Column)</l>
+<l>dev_set_color ('white')</l>
+<c>* 'Area: '+Area, Row-80, Column-100</c>
+<c>* 'Circularity: '+Circularity, Row-50, Column-100</c>
+<l>return ()</l>
+</body>
+<docu id="get_features">
+<short lang="en_US">extract the features area and circularity</short>
+<parameters>
+<parameter id="Area"/>
+<parameter id="Circularity"/>
+<parameter id="Column"/>
+<parameter id="ObjectSelected"/>
+<parameter id="Row"/>
+<parameter id="WindowHandle"/>
+</parameters>
+</docu>
+</procedure>
+</hdevelop>
