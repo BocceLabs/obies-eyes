@@ -6,6 +6,13 @@ import re
 HOST = 'localhost'
 PORT = 60000
 
+"""
+Expects socket data in this format:
+P=[None],A=[None,None,None,None],B=[None,None,None,None]
+    -or-
+P=[(517.4,28.7)],A=[(1236.8, 483.6);None;None;None],B=[(843.2,568.9),(246.4,523.9),None;None]
+"""
+
 # receive data
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.connect((HOST, PORT))
@@ -15,9 +22,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         data = s.recv(1024)
         data = data.decode('ascii').strip()
         print(data)
-        # if "hello from halcon" in data:
-        #     print("true")
-        #     s.send(b"bocce")
         match = "^P=\[(\S*?)\],A=\[(\S*?);(\S*?);(\S*?);(\S*?)\],B=\[(\S*?);(\S*?);(\S*?);(\S*?)\]\Z"
         r = re.search(match, data)
 
