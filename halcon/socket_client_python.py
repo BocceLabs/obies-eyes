@@ -17,7 +17,6 @@ P=[(517.4,28.7)],A=[(1236.8, 483.6);None;None;None],B=[(843.2,568.9);(246.4,523.
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.connect((HOST, PORT))
 
-    i = 0
     while True:
         data = s.recv(1024)
         data = data.decode('ascii').strip()
@@ -37,7 +36,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                         r.group(8), # b3
                         r.group(9)] # b4
         except AttributeError:
-            s.send(b"error")
+            s.send(b"parse error")
+            print("parse error")
             continue
 
         # extract the coordinates
@@ -56,9 +56,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                     balls.append(None)
 
         # debug
-        print(i)
         s.send(b"bocce")
-        i += 1
 
 
 s.close()
