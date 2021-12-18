@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<hdevelop file_version="1.2" halcon_version="21.05.0.0">
+<hdevelop file_version="1.2" halcon_version="21.11.0.0">
 <procedure name="main">
 <interface/>
 <body>
@@ -82,12 +82,12 @@
 <c></c>
 <c></c>
 <c>*** Bocce - Color Model **********************************************************</c>
-<l>KNN_Filename := 'C:/Users/drhoffma/PycharmProjects/obies-eyes/halcon/knn_model.gnc'</l>
+<l>KNN_Filename := 'knn_model.gnc'</l>
 <l>read_class_knn(KNN_Filename, KNNHandle)</l>
 <c></c>
 <c>* set up a font</c>
 <l>query_font(WindowHandle, Font)</l>
-<l>set_font(WindowHandle, 'Luckiest Guy-14')</l>
+<l>set_font(WindowHandle, 'Luckiest Guy-19')</l>
 <c></c>
 <c>* set up court roi</c>
 <l>gen_rectangle1(Rectangle, 1140, 660, 1470, 1625)</l>
@@ -95,6 +95,13 @@
 <c>* Constants</c>
 <l>PixelsPerInch := 132/12</l>
 <c></c>
+<l>stop()</l>
+<c></c>
+<c>* socket connection</c>
+<l>close_socket(Socket)</l>
+<l>open_socket_accept(60000, [], [], Socket)</l>
+<l>stop()</l>
+<l>send_data(Socket, 'A', 'hello', [])</l>
 <l>stop()</l>
 <c></c>
 <c>*** Loop over camera frames *****************************************************</c>
@@ -120,11 +127,11 @@
 <l>    try</l>
 <l>        area_center_xld (Matches_Pallino, Area_Pallino, Row_Pallino, Column_Pallino, PointOrder_Pallino)</l>
 <l>        dev_disp_text('P', 'image', Row_Pallino[0], Column_Pallino[0]+24, 'black', ['box_color'], ['white'])</l>
+<l>        PallinoFound := true</l>
 <l>    catch (Exception)</l>
 <l>        *dev_disp_text('No Pallino', 'window', 10, 'left', 'red', ['box_color'], ['white'])</l>
 <l>        PallinoFound := false</l>
 <l>    endtry</l>
-<l>    PallinoFound := true</l>
 <c>    </c>
 <c>    * Try to find at least one bocce</c>
 <l>    try</l>
@@ -171,18 +178,22 @@
 <c>        * Display Ball IDs</c>
 <c>        </c>
 <l>        if(Result == 0)</l>
-<l>            dev_disp_text('A', 'image', R[0], C[0]+24, 'blue', ['box_color'], ['white'])</l>
+<l>            *dev_disp_text('A', 'image', R[0], C[0]+24, 'blue', ['box_color'], ['white'])</l>
 <l>            if(PallinoFound)</l>
 <l>                distance_pp(Row_Pallino[0], Column_Pallino[0], R[0], C[0], PallinoDistPx)</l>
 <l>                PallinoDistIn := PallinoDistPx / PixelsPerInch</l>
-<l>                dev_disp_text('pixels: ' + PallinoDistPx $ '10.1f' + '\ninches: ' + PallinoDistIn $ '10.1f', 'window', 40, 'right', 'blue', ['box_color'], ['white'])</l>
+<l>                *text := 'pixels: ' + PallinoDistPx $ '10.1f' + '\ninches: ' + PallinoDistIn $ '10.1f'</l>
+<l>                text := 'blue inches: ' + PallinoDistIn $ '10.1f'</l>
+<l>                dev_disp_text(text, 'image', R[0], C[0] + 24, 'blue', ['box_color'], ['white'])</l>
 <l>            endif</l>
 <l>        elseif(Result == 1)</l>
-<l>            dev_disp_text('B', 'image', R[0], C[0]+24, 'red', ['box_color'], ['white'])</l>
+<l>            *dev_disp_text('B', 'image', R[0], C[0]+24, 'red', ['box_color'], ['white'])</l>
 <l>            if(PallinoFound)</l>
 <l>                distance_pp(Row_Pallino[0], Column_Pallino[0], R[0], C[0], PallinoDistPx)</l>
 <l>                PallinoDistIn := PallinoDistPx / PixelsPerInch</l>
-<l>                dev_disp_text('pixels: ' + PallinoDistPx $ '10.1f' + '\ninches: ' + PallinoDistIn $ '10.1f', 'window', 80, 'right', 'red', ['box_color'], ['white'])</l>
+<l>                *text := 'pixels: ' + PallinoDistPx $ '10.1f' + '\ninches: ' + PallinoDistIn $ '10.1f'</l>
+<l>                text := 'red inches: ' + PallinoDistIn $ '10.1f'</l>
+<l>                dev_disp_text(text, 'image', R[0], C[0] + 24, 'red', ['box_color'], ['white'])</l>
 <c></c>
 <l>            endif</l>
 <l>        endif</l>

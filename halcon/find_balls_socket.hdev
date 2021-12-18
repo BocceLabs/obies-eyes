@@ -132,11 +132,12 @@
 <c>    * Grab a frame</c>
 <l>    grab_image_async (FullImage, AcqHandleWest, -1)</l>
 <l>    reduce_domain(FullImage, Rectangle, Image)</l>
+<l>    decompose3 (Image, ImageR, ImageG, ImageB)</l>
 <l>    dev_display(Image)</l>
 <c>    </c>
 <c>    * Find Bocces and Pallinos</c>
 <l>    find_generic_shape_model (Image, ModelID_Bocce, MatchResultID_Bocce, NumMatchResult_Bocce)</l>
-<l>    find_generic_shape_model (Image, ModelID_Pallino, MatchResultID_Pallino, NumMatchResult_Pallino)</l>
+<l>    find_generic_shape_model (ImageR, ModelID_Pallino, MatchResultID_Pallino, NumMatchResult_Pallino)</l>
 <c></c>
 <c>    * Pallino Results</c>
 <l>    get_generic_shape_model_result (MatchResultID_Pallino, 'all', 'score', Score)</l>
@@ -168,7 +169,7 @@
 <c></c>
 <c>    * Bocce team distinguisher</c>
 <c>    * Convert to HSV</c>
-<l>    decompose3 (Image, ImageR, ImageG, ImageB)</l>
+<c>    </c>
 <l>    trans_from_rgb (ImageR, ImageG, ImageB, ImageH, ImageS, ImageV, 'hsv')</l>
 <l>    compose3(ImageH, ImageS, ImageV, ImageHSV)</l>
 <c>    </c>
@@ -179,6 +180,7 @@
 <l>    count_obj(Regions_Bocce, Num_Regions)</l>
 <c>    </c>
 <l>    for k := 1 to Num_Regions by 1</l>
+<l>        None := false</l>
 <c>        * Select the region</c>
 <l>        select_obj(Regions_Bocce, Single, k)</l>
 <c>        * Get the HSV values</c>
@@ -213,41 +215,26 @@
 <l>            *    text := PallinoDistIn $ '10.1f'</l>
 <l>            *    dev_disp_text(text, 'image', R[0], C[0] + 24, 'red', ['box_color'], ['white'])</l>
 <l>            *endif</l>
+<l>            try</l>
+<l>               tuple_string(C[0], '.1f', a_x_str)</l>
+<l>               tuple_string(R[0], '.1f', a_y_str)</l>
+<l>            catch (Exception)</l>
+<l>                None := true</l>
+<l>            endtry</l>
 <c>            </c>
-<c>            * Add the ball</c>
-<l>            if (A1 == 'None')</l>
-<l>                try</l>
-<l>                    tuple_string(C[0], '.1f', a1_x_str)</l>
-<l>                    tuple_string(R[0], '.1f', a1_y_str)</l>
-<l>                    A1 := '(' + p_x_str + ',' + p_y_str + ')'</l>
-<l>                catch (Exception)</l>
-<l>                    A1 := 'None'</l>
-<l>                endtry</l>
-<l>            elseif (A2 == 'None')</l>
-<l>                try</l>
-<l>                    tuple_string(C[0], '.1f', a1_x_str)</l>
-<l>                    tuple_string(R[0], '.1f', a1_y_str)</l>
-<l>                    A2 := '(' + p_x_str + ',' + p_y_str + ')'</l>
-<l>                catch (Exception)</l>
-<l>                    A2 := 'None'</l>
-<l>                endtry</l>
-<l>            elseif (A3 == 'None')</l>
-<l>                try</l>
-<l>                    tuple_string(C[0], '.1f', a1_x_str)</l>
-<l>                    tuple_string(R[0], '.1f', a1_y_str)</l>
-<l>                    A3 := '(' + p_x_str + ',' + p_y_str + ')'</l>
-<l>                catch (Exception)</l>
-<l>                    A3 := 'None'</l>
-<l>                endtry</l>
-<l>            elseif (A4 == 'None')</l>
-<l>                try</l>
-<l>                    tuple_string(C[0], '.1f', a1_x_str)</l>
-<l>                    tuple_string(R[0], '.1f', a1_y_str)</l>
-<l>                    A4 := '(' + p_x_str + ',' + p_y_str + ')'</l>
-<l>                catch (Exception)</l>
-<l>                    A4 := 'None'</l>
-<l>                endtry</l>
+<l>            if (not None)</l>
+<c>                * Add the ball</c>
+<l>                if (A1 == 'None')</l>
+<l>                    A1 := '(' + a_x_str + ',' + a_y_str + ')'</l>
+<l>                elseif (A2 == 'None')</l>
+<l>                    A2 := '(' + a_x_str + ',' + a_y_str + ')'</l>
+<l>                elseif (A3 == 'None')</l>
+<l>                    A3 := '(' + a_x_str + ',' + a_y_str + ')'</l>
+<l>                elseif (A4 == 'None')</l>
+<l>                    A4 := '(' + a_x_str + ',' + a_y_str + ')'</l>
+<l>                endif</l>
 <l>            endif</l>
+<l>            None := false</l>
 <c>            </c>
 <c>        * Team B ("Blue")</c>
 <l>        elseif(Result == 0)</l>
@@ -262,40 +249,26 @@
 <l>            *    dev_disp_text(text, 'image', R[0], C[0] + 24, 'blue', ['box_color'], ['white'])</l>
 <l>            *endif</l>
 <c>            </c>
-<c>            * Add the ball</c>
-<l>            if (B1 == 'None')</l>
-<l>                try</l>
-<l>                    tuple_string(C[0], '.1f', a1_x_str)</l>
-<l>                    tuple_string(R[0], '.1f', a1_y_str)</l>
-<l>                    A1 := '(' + p_x_str + ',' + p_y_str + ')'</l>
-<l>                catch (Exception)</l>
-<l>                    B1 := 'None'</l>
-<l>                endtry</l>
-<l>            elseif (B2 == 'None')</l>
-<l>                try</l>
-<l>                    tuple_string(C[0], '.1f', a1_x_str)</l>
-<l>                    tuple_string(R[0], '.1f', a1_y_str)</l>
-<l>                    B2 := '(' + p_x_str + ',' + p_y_str + ')'</l>
-<l>                catch (Exception)</l>
-<l>                    B2 := 'None'</l>
-<l>                endtry</l>
-<l>            elseif (B3 == 'None')</l>
-<l>                try</l>
-<l>                    tuple_string(C[0], '.1f', a1_x_str)</l>
-<l>                    tuple_string(R[0], '.1f', a1_y_str)</l>
-<l>                    B3 := '(' + p_x_str + ',' + p_y_str + ')'</l>
-<l>                catch (Exception)</l>
-<l>                    B3 := 'None'</l>
-<l>                endtry</l>
-<l>            elseif (B4 == 'None')</l>
-<l>                try</l>
-<l>                    tuple_string(C[0], '.1f', a1_x_str)</l>
-<l>                    tuple_string(R[0], '.1f', a1_y_str)</l>
-<l>                    B4 := '(' + p_x_str + ',' + p_y_str + ')'</l>
-<l>                catch (Exception)</l>
-<l>                    B4 := 'None'</l>
-<l>                endtry</l>
+<l>            try</l>
+<l>               tuple_string(C[0], '.1f', b_x_str)</l>
+<l>               tuple_string(R[0], '.1f', b_y_str)</l>
+<l>            catch (Exception)</l>
+<l>                None := true</l>
+<l>            endtry</l>
+<c>            </c>
+<l>            if (not None)</l>
+<c>                * Add the ball</c>
+<l>                if (B1 == 'None')</l>
+<l>                    B1 := '(' + b_x_str + ',' + b_y_str + ')'</l>
+<l>                elseif (B2 == 'None')</l>
+<l>                    B2 := '(' + b_x_str + ',' + b_y_str + ')'</l>
+<l>                elseif (B3 == 'None')</l>
+<l>                    B3 := '(' + b_x_str + ',' + b_y_str + ')'</l>
+<l>                elseif (B4 == 'None')</l>
+<l>                    B4 := '(' + b_x_str + ',' + b_y_str + ')'</l>
+<l>                endif</l>
 <l>            endif</l>
+<l>            None := false</l>
 <l>        endif</l>
 <l>    endfor</l>
 <c>    </c>

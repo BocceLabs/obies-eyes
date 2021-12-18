@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.2" halcon_version="21.11.0.0">
+<procedure name="main">
+<interface/>
+<body>
+<l>open_socket_accept(60000, ['protocol'], ['TCP4'], AcceptingSocket)</l>
+<c>* Busy wait for an incoming connection</c>
+<l>dev_error_var (Error, 1)</l>
+<l>dev_set_check ('~give_error')</l>
+<l>OpenStatus := 5</l>
+<l>while (OpenStatus != 2)</l>
+<l>    socket_accept_connect (AcceptingSocket, 'false', Socket)</l>
+<l>    OpenStatus := Error</l>
+<l>    wait_seconds (0.5)</l>
+<l>endwhile</l>
+<l>dev_set_check ('give_error')</l>
+<c>* Connection established</c>
+<l>send_data(Socket, 'A', 'hello from halcon',[])</l>
+<l>receive_data(Socket, 'A', Data, From)</l>
+<l>close_socket(Socket)</l>
+<l>close_socket(AcceptingSocket)</l>
+</body>
+<docu id="main">
+<parameters/>
+</docu>
+</procedure>
+</hdevelop>
