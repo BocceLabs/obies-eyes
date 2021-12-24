@@ -45,6 +45,24 @@
 <l>dev_set_line_width (2)</l>
 <l>dev_clear_window()</l>
 <c></c>
+<c>*** Start a socket connection ***************************************************</c>
+<l>open_socket_accept(60000, ['protocol'], ['TCP4'], AcceptingSocket)</l>
+<c>* Busy wait for an incoming connection</c>
+<l>dev_error_var (Error, 1)</l>
+<l>dev_set_check ('~give_error')</l>
+<l>OpenStatus := 5</l>
+<l>while (OpenStatus != 2)</l>
+<l>    dev_disp_text ('Open the Python Socket client', 'window', 'center', 'center', 'black', [], [])</l>
+<l>    socket_accept_connect (AcceptingSocket, 'false', Socket)</l>
+<l>    OpenStatus := Error</l>
+<l>    wait_seconds (0.5)</l>
+<l>endwhile</l>
+<l>dev_set_check ('give_error')</l>
+<l>dev_clear_window()</l>
+<l>dev_disp_text ('Connected!', 'window', 'center', 'center', 'black', [], [])</l>
+<l>stop()</l>
+<l>dev_clear_window()</l>
+<c></c>
 <c>*** Bocce - Shape Model *********************************************************</c>
 <c>* Bocce - model from contour</c>
 <l>BocceRadius := 24</l>
@@ -65,7 +83,7 @@
 <c></c>
 <c>*** Pallino - Shape Model ********************************************************</c>
 <c>* Pallino - model from contour</c>
-<l>PallinoRadius := 9.5</l>
+<l>PallinoRadius := 9</l>
 <l>gen_circle_contour_xld (ROI_1, 1365, 1095, PallinoRadius, 0, 6.28318, 'positive', 1)</l>
 <l>create_generic_shape_model (ModelID_Pallino)</l>
 <c>* model train param</c>
@@ -75,10 +93,10 @@
 <c>* train model</c>
 <l>train_generic_shape_model (ROI_1, ModelID_Pallino)</l>
 <c>* model search param</c>
-<l>set_generic_shape_model_param (ModelID_Pallino, 'max_deformation', 3)</l>
+<l>set_generic_shape_model_param (ModelID_Pallino, 'max_deformation', 2)</l>
 <l>set_generic_shape_model_param (ModelID_Pallino, 'min_score', 0.8)</l>
 <l>set_generic_shape_model_param (ModelID_Pallino, 'max_overlap', 0.1)</l>
-<l>set_generic_shape_model_param (ModelID_Pallino, 'min_contrast', 22)</l>
+<l>set_generic_shape_model_param (ModelID_Pallino, 'min_contrast', 21)</l>
 <l>set_generic_shape_model_param (ModelID_Pallino, 'num_matches', 1)</l>
 <c></c>
 <c></c>
@@ -95,24 +113,6 @@
 <c></c>
 <c>* Constants</c>
 <l>PixelsPerInch := 132/12</l>
-<c></c>
-<c>*** Start a socket connection ***************************************************</c>
-<l>open_socket_accept(60000, ['protocol'], ['TCP4'], AcceptingSocket)</l>
-<c>* Busy wait for an incoming connection</c>
-<l>dev_error_var (Error, 1)</l>
-<l>dev_set_check ('~give_error')</l>
-<l>OpenStatus := 5</l>
-<l>while (OpenStatus != 2)</l>
-<l>    dev_disp_text ('Open the Python Socket client', 'window', 'center', 'center', 'black', [], [])</l>
-<l>    socket_accept_connect (AcceptingSocket, 'false', Socket)</l>
-<l>    OpenStatus := Error</l>
-<l>    wait_seconds (0.5)</l>
-<l>endwhile</l>
-<l>dev_set_check ('give_error')</l>
-<l>dev_clear_window()</l>
-<l>dev_disp_text ('Connected!', 'window', 'center', 'center', 'black', [], [])</l>
-<l>stop()</l>
-<l>dev_clear_window()</l>
 <c></c>
 <c>*** Loop over camera frames *****************************************************</c>
 <l>while (true)</l>
@@ -137,7 +137,7 @@
 <c>    </c>
 <c>    * Find Bocces and Pallinos</c>
 <l>    find_generic_shape_model (Image, ModelID_Bocce, MatchResultID_Bocce, NumMatchResult_Bocce)</l>
-<l>    find_generic_shape_model (ImageR, ModelID_Pallino, MatchResultID_Pallino, NumMatchResult_Pallino)</l>
+<l>    find_generic_shape_model (Image, ModelID_Pallino, MatchResultID_Pallino, NumMatchResult_Pallino)</l>
 <c></c>
 <c>    * Pallino Results</c>
 <l>    get_generic_shape_model_result (MatchResultID_Pallino, 'all', 'score', Score)</l>
