@@ -225,6 +225,11 @@ if __name__ == "__main__":
         reds = r_ct.update(balls[1:5])
         blues = b_ct.update(balls[5:9])
 
+        # filter None values out of list
+        pallinos = list(filter(None, pallinos))
+        reds = list(filter(None, reds))
+        blues = list(filter(None, blues))
+
         # loop over the tracked objects
         # for (objectID, centroid) in pallinos.items():
         #     if objectID not in pallino_objectIDs:
