@@ -220,25 +220,25 @@ if __name__ == "__main__":
         if len(balls) == 0:
             break
 
-        # update our centroid trackers
-        pallinos = p_ct.update([balls[0]])
-        reds = r_ct.update(balls[1:5])
-        blues = b_ct.update(balls[5:9])
-
         # filter None values out of list
-        pallinos = list(filter(None, pallinos))
-        reds = list(filter(None, reds))
-        blues = list(filter(None, blues))
+        p = list(filter(None, [balls[0]]))
+        r = list(filter(None, balls[1:5]))
+        b = list(filter(None, balls[5:9]))
+
+        # update our centroid trackers
+        pallinos = p_ct.update(p)
+        reds = r_ct.update(r)
+        blues = b_ct.update(b)
 
         # loop over the tracked objects
-        # for (objectID, centroid) in pallinos.items():
-        #     if objectID not in pallino_objectIDs:
-        #         # add the object to the set
-        #         pallino_objectIDs[objectID] = Pallino(objectID, PALLINO_COLOR)
-        #
-        #     pallino_objectIDs[objectID].add_coord_sensor(centroid)
-        #     pallino_objectIDs[objectID].sensor_to_smoothed_court_coord()
-        #     court.draw_bocce(pallino_objectIDs[objectID].coord_court_imperial, pallino_objectIDs[objectID].color)
+        for (objectID, centroid) in pallinos.items():
+            if objectID not in pallino_objectIDs:
+                # add the object to the set
+                pallino_objectIDs[objectID] = Pallino(objectID, PALLINO_COLOR)
+
+            pallino_objectIDs[objectID].add_coord_sensor(centroid)
+            pallino_objectIDs[objectID].sensor_to_smoothed_court_coord()
+            court.draw_pallino(pallino_objectIDs[objectID].coord_court_imperial, pallino_objectIDs[objectID].color)
 
 
         # loop over the tracked objects
