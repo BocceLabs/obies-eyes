@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<hdevelop file_version="1.2" halcon_version="21.11.0.0">
+<hdevelop file_version="1.2" halcon_version="21.05.0.0">
 <procedure name="main">
 <interface/>
 <body>
 <l>dev_update_off ()</l>
 <c>* Camera connections</c>
-<l>*open_framegrabber ('GigEVision2', 0, 0, 0, 0, 0, 0, 'progressive', -1, 'default', -1, 'false', 'default', '000f315dab70_AlliedVisionTechnologies_MakoG507C9617', 0, -1, AcqHandleWest)</l>
-<l>open_framegrabber ('GigEVision2', 0, 0, 0, 0, 0, 0, 'progressive', -1, 'default', -1, 'false', 'default', '000f315dab39_AlliedVisionTechnologies_MakoG507C9617', 0, -1, AcqHandleEast)</l>
+<l>open_framegrabber ('GigEVision2', 0, 0, 0, 0, 0, 0, 'progressive', -1, 'default', -1, 'false', 'default', '000f315dab70_AlliedVisionTechnologies_MakoG507C9617', 0, -1, AcqHandleWest)</l>
+<l>*open_framegrabber ('GigEVision2', 0, 0, 0, 0, 0, 0, 'progressive', -1, 'default', -1, 'false', 'default', '000f315dab39_AlliedVisionTechnologies_MakoG507C9617', 0, -1, AcqHandleEast)</l>
 <c>* Camera Parameters - West</c>
-<l>*set_framegrabber_param (AcqHandleWest, 'TriggerSelector', 'FrameStart')</l>
-<l>*set_framegrabber_param (AcqHandleWest, 'TriggerMode', 'On')</l>
-<l>*set_framegrabber_param (AcqHandleWest, 'TriggerSource', 'Freerun')</l>
-<l>*set_framegrabber_param (AcqHandleWest, 'ExposureAuto', 'Continuous')</l>
-<l>*set_framegrabber_param (AcqHandleWest, 'ExposureMode', 'Timed')</l>
+<l>set_framegrabber_param (AcqHandleWest, 'TriggerSelector', 'FrameStart')</l>
+<l>set_framegrabber_param (AcqHandleWest, 'TriggerMode', 'On')</l>
+<l>set_framegrabber_param (AcqHandleWest, 'TriggerSource', 'Freerun')</l>
+<l>set_framegrabber_param (AcqHandleWest, 'ExposureAuto', 'Continuous')</l>
+<l>set_framegrabber_param (AcqHandleWest, 'ExposureMode', 'Timed')</l>
 <c>* Camera Parameters - East</c>
-<l>set_framegrabber_param (AcqHandleEast, 'TriggerSelector', 'FrameStart')</l>
-<l>set_framegrabber_param (AcqHandleEast, 'TriggerMode', 'On')</l>
-<l>set_framegrabber_param (AcqHandleEast, 'TriggerSource', 'Freerun')</l>
-<l>set_framegrabber_param (AcqHandleEast, 'ExposureAuto', 'Continuous')</l>
-<l>set_framegrabber_param (AcqHandleEast, 'ExposureMode', 'Timed')</l>
-<l>get_framegrabber_param (AcqHandleEast, '[Stream]GevStreamActiveEngine', FrameGrabberStreamValue)</l>
+<l>*set_framegrabber_param (AcqHandleEast, 'TriggerSelector', 'FrameStart')</l>
+<l>*set_framegrabber_param (AcqHandleEast, 'TriggerMode', 'On')</l>
+<l>*set_framegrabber_param (AcqHandleEast, 'TriggerSource', 'Freerun')</l>
+<l>*set_framegrabber_param (AcqHandleEast, 'ExposureAuto', 'Continuous')</l>
+<l>*set_framegrabber_param (AcqHandleEast, 'ExposureMode', 'Timed')</l>
+<l>*get_framegrabber_param (AcqHandleEast, '[Stream]GevStreamActiveEngine', FrameGrabberStreamValue)</l>
 <c>* Start grabbing frames</c>
-<l>*grab_image_start (AcqHandleWest, -1)</l>
-<l>grab_image_start (AcqHandleEast, -1)</l>
+<l>grab_image_start (AcqHandleWest, -1)</l>
+<l>*grab_image_start (AcqHandleEast, -1)</l>
 <c></c>
 <c>*** Save a frame for support request ********************************************</c>
 <c>* Grab a frame</c>
-<l>*grab_image_async (ImageWest, AcqHandleWest, -1)</l>
-<l>grab_image_async (ImageEast, AcqHandleEast, -1)</l>
+<l>grab_image_async (ImageWest, AcqHandleWest, -1)</l>
+<l>*grab_image_async (ImageEast, AcqHandleEast, -1)</l>
 <c></c>
 <c>* Reduce the domain</c>
 <l>*gen_rectangle1(Rectangle, 1140, 660, 1470, 1625)</l>
@@ -108,7 +108,7 @@
 <l>set_font(WindowHandle, 'Luckiest Guy-19')</l>
 <c></c>
 <c>* set up court roi</c>
-<l>gen_rectangle1(Rectangle, 1140, 660, 1470, 1625)</l>
+<l>gen_rectangle1(Rectangle, 1100, 600, 1500, 1900)</l>
 <c></c>
 <c>* Constants</c>
 <l>PixelsPerInch := 132/12</l>
@@ -130,7 +130,7 @@
 <c>    </c>
 <c>    * Grab a frame</c>
 <l>    try</l>
-<l>        grab_image_async (FullImage, AcqHandleEast, -1)</l>
+<l>        grab_image_async (FullImage, AcqHandleWest, -1)</l>
 <l>    catch (Exception)</l>
 <l>        continue</l>
 <l>    endtry</l>
@@ -282,8 +282,17 @@
 <l>    SocketData := 'P=[' + P + '],' + \
                   'A=[' + A1 + ';' + A2 + ';' + A3 + ';' + A4 + '],' + \
                   'B=[' + B1 + ';' + B2 + ';' + B3 + ';' + B4 + ']'</l>
-<l>    send_data(Socket, 'A', SocketData,[])</l>
-<l>    receive_data(Socket, 'z', Data, From)</l>
+<c>    </c>
+<l>    try</l>
+<l>        send_data(Socket, 'A', SocketData,[])</l>
+<l>        receive_data(Socket, 'z', Data, From)</l>
+<l>    catch(Exception)</l>
+<l>        close_framegrabber (AcqHandleWest)</l>
+<l>        close_socket(Socket)</l>
+<l>        close_socket(AcceptingSocket)</l>
+<l>        stop()</l>
+<l>    endtry</l>
+<c>    </c>
 <l>    tuple_equal(Data, 'bocce', Equal)</l>
 <l>    if (not Equal)</l>
 <l>        dev_disp_text ('Socket error' + Data, 'window', 'top', 'left', 'black', [], [])</l>
@@ -297,7 +306,7 @@
 <l>endwhile</l>
 <c></c>
 <c>* Cleanup</c>
-<l>close_framegrabber (AcqHandleEast)</l>
+<l>close_framegrabber (AcqHandleWest)</l>
 <l>close_socket(Socket)</l>
 <l>close_socket(AcceptingSocket)</l>
 <c></c>
