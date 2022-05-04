@@ -162,50 +162,6 @@ if __name__ == "__main__":
     # intstantiate court drawing
     court = BocceCourtDrawing()
 
-    # # Halcon Sample Data
-    # def parse_sample(data):
-    #     match = "^P=\[(\S*?)\],A=\[(\S*?);(\S*?);(\S*?);(\S*?)\],B=\[(\S*?);(\S*?);(\S*?);(\S*?)\]\Z"
-    #     r = re.search(match, data)
-    #
-    #     # extract the ball coordinates
-    #     try:
-    #         balls_str = [r.group(1),  # p
-    #                      r.group(2),  # a1
-    #                      r.group(3),  # a2
-    #                      r.group(4),  # a3
-    #                      r.group(5),  # a4
-    #                      r.group(6),  # b1
-    #                      r.group(7),  # b2
-    #                      r.group(8),  # b3
-    #                      r.group(9)]  # b4
-    #     except AttributeError:
-    #         return []
-    #
-    #     # extract the coordinates
-    #     balls = []
-    #     for b in balls_str:
-    #         if b == "None":
-    #             balls.append(None)
-    #         else:
-    #             match = "\((\S*?),(\S*?)\)"
-    #             r = re.search(match, b)
-    #             try:
-    #                 x = float(r.group(1))
-    #                 y = float(r.group(2))
-    #                 balls.append((x, y))
-    #             except:
-    #                 balls.append(None)
-    #
-    #     return balls
-    #
-    #
-    # # load sample data
-    # with open("sample_data.txt", "r") as file:
-    #     lines = file.read()
-    #
-    # # split via new line character
-    # lines = lines.split("\n")
-
     # centroid trackers
     p_ct = CentroidTracker()
     r_ct = CentroidTracker()
@@ -269,6 +225,7 @@ if __name__ == "__main__":
             if len(balls) == 0:
                 continue
 
+            # filter None values out of list
             p = list(filter(None, [balls[0]]))
             r = list(filter(None, balls[1:5]))
             b = list(filter(None, balls[5:9]))
@@ -280,11 +237,6 @@ if __name__ == "__main__":
             pallinos = p_ct.update(p)
             reds = r_ct.update(r)
             blues = b_ct.update(b)
-
-            # update our centroid trackers
-            pallinos = p_ct.update([balls[0]])
-            reds = r_ct.update(balls[1:5])
-            blues = b_ct.update(balls[5:9])
 
             # loop over the tracked objects
             for (objectID, centroid) in pallinos.items():
