@@ -58,16 +58,13 @@ def convert_coord(pt1_real):
 class BocceCourtDrawing(object):
     def __init__(self):
         self.court = None
-        self.clone = None
-
-        # create the window and mouse callback
-        cv2.namedWindow("bocce court")
-        cv2.setMouseCallback("bocce court", self.extract_coordinates)
 
         # List to store mouse start/end points
         self.image_coordinates = []
         self.drawing = False
-        self.pause = False
+
+    def get_court_image(self):
+        return self.court
 
     def create_court(self, walls=True):
         # create the empty array
@@ -75,33 +72,6 @@ class BocceCourtDrawing(object):
 
         # colorize the canvas
         self.court[0:H, 0:W] = COURT_COLOR
-        self.clone = self.court.copy()
-
-    def extract_coordinates(self, event, x, y, flags, parameters):
-        # Record starting (x,y) coordinates on left mouse button click
-        if event == cv2.EVENT_LBUTTONDOWN:
-            self.pause = True
-            self.drawing = True
-            print("drawing mode ON")
-            self.image_coordinates = [(x,y)]
-            cv2.circle(self.court, (x, y), 3, (255, 0, 255), -1)
-
-        if event == cv2.EVENT_MOUSEMOVE:
-            if self.drawing:
-                cv2.circle(self.court, (x, y), 3, (255, 0, 255), -1)
-
-        # Record ending (x,y) coordintes on left mouse bottom release
-        elif event == cv2.EVENT_LBUTTONUP:
-            self.drawing = False
-            print("drawing mode OFF")
-
-        # Clear drawing boxes on right mouse button click
-        elif event == cv2.EVENT_RBUTTONDOWN:
-            self.clone = self.court.copy()
-            self.pause = False
-
-    def show_image(self):
-        return self.clone
 
     def dashed_line(self, img, pt1, pt2, color, radius=1, gap=DASHED_LINE_GAP):
         # determine the distance
@@ -168,6 +138,13 @@ class BocceCourtDrawing(object):
             return
         cv2.circle(self.court, convert_coord(pt), PALLINO_RADIUS, color, -1)
 
+    def indicate_moving(self, pt):
+        if pt == (None, None) or pt == None:
+            return
+        pt = convert_coord(pt)
+        pt = (pt[0]-6, pt[1]+4)
+        cv2.putText(self.court, "M", pt, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+
 
 if __name__ == "__main__":
     # import
@@ -175,76 +152,6 @@ if __name__ == "__main__":
 
     # intstantiate court drawing
     court = BocceCourtDrawing()
-
-    # generate random data
-    # while True:
-    #     court.create_court()
-    #     court.draw_walls()
-    #     court.overlay_midcourt_line()
-    #     court.overlay_target_zones()
-
-        ### RANDOM DATA
-        # # set a random spot for the center of the cluster
-        # bx = random.uniform(300, 2000)
-        # by = random.uniform(700, 1300)
-        #
-        # # create bocce balls
-        # ballsA = []
-        # ballsB = []
-        # for b in range(0, 4):
-        #     # create two balls
-        #     bA = Bocce(BOCCE_A_COLOR)
-        #     bB = Bocce(BOCCE_B_COLOR)
-        #
-        #     # set ball camera coords
-        #     bA.set_coord_sensor((
-        #         bx * random.uniform(.7, 1.3),
-        #         by * random.uniform(.7, 1.3)
-        #     ))
-        #     bB.set_coord_sensor((
-        #         bx * random.uniform(.8, 1.2),
-        #         by * random.uniform(.8, 1.2)
-        #     ))
-        #
-        #     # add the balls to their respective lists
-        #     ballsA.append(bA)
-        #     ballsB.append(bB)
-        #
-        # # create pallino
-        # p = Pallino((0, 255, 255))
-        # p.set_coord_sensor((
-        #     bx * random.uniform(.8, 1.2),
-        #     by * random.uniform(.8, 1.2)
-        # ))
-        #
-        # # draw bocce balls
-        # for b in ballsA:
-        #     court.draw_bocce(b.coord_court_imperial, b.color)
-        # for b in ballsB:
-        #     court.draw_bocce(b.coord_court_imperial, b.color)
-        #
-        # # draw pallino
-        # court.draw_pallino(p.coord_court_imperial, p.color)
-        # court.clone = court.court
-        #
-        # while court.pause:
-        #     # display and capture keypress
-        #     cv2.imshow("bocce court", court.show_image())
-        #     key = cv2.waitKey(1)
-        #
-        #     # display court until "q" button pressed
-        #     if key == ord("q"):
-        #         cv2.destroyAllWindows()
-        #         exit(1)
-        #
-        # # display and capture keypress
-        # cv2.imshow("bocce court", court.show_image())
-        # key = cv2.waitKey(2000)
-        #
-        # # display court until "q" button pressed
-        # if key == ord("q"):
-        #     cv2.destroyAllWindows()
-        #     exit(1)
 
     # Halcon Sample Data
     def parse_sample(data):
@@ -284,7 +191,7 @@ if __name__ == "__main__":
 
 
     # load sample data
-    with open("sample_data_2.txt", "r") as file:
+    with open("sample_data.txt", "r") as file:
         lines = file.read()
 
     # split via new line character
@@ -319,14 +226,14 @@ if __name__ == "__main__":
         blues = b_ct.update(balls[5:9])
 
         # loop over the tracked objects
-        for (objectID, centroid) in pallinos.items():
-            if objectID not in pallino_objectIDs:
-                # add the object to the set
-                pallino_objectIDs[objectID] = Pallino(objectID, PALLINO_COLOR)
-
-            pallino_objectIDs[objectID].add_coord_sensor(centroid)
-            pallino_objectIDs[objectID].sensor_to_smoothed_court_coord()
-            court.draw_bocce(pallino_objectIDs[objectID].coord_court_imperial, pallino_objectIDs[objectID].color)
+        # for (objectID, centroid) in pallinos.items():
+        #     if objectID not in pallino_objectIDs:
+        #         # add the object to the set
+        #         pallino_objectIDs[objectID] = Pallino(objectID, PALLINO_COLOR)
+        #
+        #     pallino_objectIDs[objectID].add_coord_sensor(centroid)
+        #     pallino_objectIDs[objectID].sensor_to_smoothed_court_coord()
+        #     court.draw_bocce(pallino_objectIDs[objectID].coord_court_imperial, pallino_objectIDs[objectID].color)
 
 
         # loop over the tracked objects
@@ -338,6 +245,8 @@ if __name__ == "__main__":
             blue_objectIDs[objectID].add_coord_sensor(centroid)
             blue_objectIDs[objectID].sensor_to_smoothed_court_coord()
             court.draw_bocce(blue_objectIDs[objectID].coord_court_imperial, blue_objectIDs[objectID].color)
+            if blue_objectIDs[objectID].isMoving:
+                court.indicate_moving(blue_objectIDs[objectID].coord_court_imperial)
 
         # loop over the tracked objects
         for (objectID, centroid) in reds.items():
@@ -348,22 +257,11 @@ if __name__ == "__main__":
             red_objectIDs[objectID].add_coord_sensor(centroid)
             red_objectIDs[objectID].sensor_to_smoothed_court_coord()
             court.draw_bocce(red_objectIDs[objectID].coord_court_imperial, red_objectIDs[objectID].color)
-
-        court.clone = court.court.copy()
-
-
-        while court.pause:
-            # display and capture keypress
-            cv2.imshow("bocce court", court.show_image())
-            key = cv2.waitKey(1)
-
-            # display court until "q" button pressed
-            if key == ord("q"):
-                cv2.destroyAllWindows()
-                exit(1)
+            if red_objectIDs[objectID].isMoving:
+                court.indicate_moving(red_objectIDs[objectID].coord_court_imperial)
 
         # display and capture keypress
-        cv2.imshow("bocce court", court.show_image())
+        cv2.imshow("bocce court", court.court)
         key = cv2.waitKey(1)
 
         # display court until "q" button pressed
