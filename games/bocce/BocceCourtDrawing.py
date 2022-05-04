@@ -5,6 +5,7 @@ import PIL
 import random
 import re
 from pyimagesearch.centroidtracker import CentroidTracker
+import imutils
 
 # dimension multiplier
 DIM_MULTIPLIER = 50
@@ -72,6 +73,9 @@ class BocceCourtDrawing(object):
 
         # colorize the canvas
         self.court[0:H, 0:W] = COURT_COLOR
+
+    def rotate_90_right(self):
+        self.court = imutils.rotate_bound(self.court, 90)
 
     def dashed_line(self, img, pt1, pt2, color, radius=1, gap=DASHED_LINE_GAP):
         # determine the distance
@@ -218,7 +222,7 @@ if __name__ == "__main__":
         while True:
             data = s.recv(1024)
             data = data.decode('ascii').strip()
-            print(data)
+            #print(data)
             match = "^P=\[(\S*?)\],A=\[(\S*?);(\S*?);(\S*?);(\S*?)\],B=\[(\S*?);(\S*?);(\S*?);(\S*?)\]\Z"
             r = re.search(match, data)
 
@@ -265,6 +269,18 @@ if __name__ == "__main__":
             if len(balls) == 0:
                 continue
 
+            p = list(filter(None, [balls[0]]))
+            r = list(filter(None, balls[1:5]))
+            b = list(filter(None, balls[5:9]))
+
+            print(r)
+            print(b)
+
+            # update our centroid trackers
+            pallinos = p_ct.update(p)
+            reds = r_ct.update(r)
+            blues = b_ct.update(b)
+
             # update our centroid trackers
             pallinos = p_ct.update([balls[0]])
             reds = r_ct.update(balls[1:5])
@@ -305,6 +321,7 @@ if __name__ == "__main__":
                     court.indicate_moving(red_objectIDs[objectID].coord_court_imperial)
 
             # display and capture keypress
+            court.rotate_90_right()
             cv2.imshow("bocce court", court.court)
             key = cv2.waitKey(1)
 
