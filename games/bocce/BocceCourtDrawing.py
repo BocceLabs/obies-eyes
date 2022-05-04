@@ -149,53 +149,58 @@ class BocceCourtDrawing(object):
 if __name__ == "__main__":
     # import
     from ball import Bocce, Pallino
+    import socket
+
+    # define the host and port
+    HOST = 'localhost'
+    PORT = 60000
 
     # intstantiate court drawing
     court = BocceCourtDrawing()
 
-    # Halcon Sample Data
-    def parse_sample(data):
-        match = "^P=\[(\S*?)\],A=\[(\S*?);(\S*?);(\S*?);(\S*?)\],B=\[(\S*?);(\S*?);(\S*?);(\S*?)\]\Z"
-        r = re.search(match, data)
-
-        # extract the ball coordinates
-        try:
-            balls_str = [r.group(1),  # p
-                         r.group(2),  # a1
-                         r.group(3),  # a2
-                         r.group(4),  # a3
-                         r.group(5),  # a4
-                         r.group(6),  # b1
-                         r.group(7),  # b2
-                         r.group(8),  # b3
-                         r.group(9)]  # b4
-        except AttributeError:
-            return []
-
-        # extract the coordinates
-        balls = []
-        for b in balls_str:
-            if b == "None":
-                balls.append(None)
-            else:
-                match = "\((\S*?),(\S*?)\)"
-                r = re.search(match, b)
-                try:
-                    x = float(r.group(1))
-                    y = float(r.group(2))
-                    balls.append((x, y))
-                except:
-                    balls.append(None)
-
-        return balls
-
-
-    # load sample data
-    with open("sample_data.txt", "r") as file:
-        lines = file.read()
-
-    # split via new line character
-    lines = lines.split("\n")
+    # # Halcon Sample Data
+    # def parse_sample(data):
+    #     match = "^P=\[(\S*?)\],A=\[(\S*?);(\S*?);(\S*?);(\S*?)\],B=\[(\S*?);(\S*?);(\S*?);(\S*?)\]\Z"
+    #     r = re.search(match, data)
+    #
+    #     # extract the ball coordinates
+    #     try:
+    #         balls_str = [r.group(1),  # p
+    #                      r.group(2),  # a1
+    #                      r.group(3),  # a2
+    #                      r.group(4),  # a3
+    #                      r.group(5),  # a4
+    #                      r.group(6),  # b1
+    #                      r.group(7),  # b2
+    #                      r.group(8),  # b3
+    #                      r.group(9)]  # b4
+    #     except AttributeError:
+    #         return []
+    #
+    #     # extract the coordinates
+    #     balls = []
+    #     for b in balls_str:
+    #         if b == "None":
+    #             balls.append(None)
+    #         else:
+    #             match = "\((\S*?),(\S*?)\)"
+    #             r = re.search(match, b)
+    #             try:
+    #                 x = float(r.group(1))
+    #                 y = float(r.group(2))
+    #                 balls.append((x, y))
+    #             except:
+    #                 balls.append(None)
+    #
+    #     return balls
+    #
+    #
+    # # load sample data
+    # with open("sample_data.txt", "r") as file:
+    #     lines = file.read()
+    #
+    # # split via new line character
+    # lines = lines.split("\n")
 
     # centroid trackers
     p_ct = CentroidTracker()
@@ -206,71 +211,112 @@ if __name__ == "__main__":
     red_objectIDs = {}
     pallino_objectIDs = {}
 
-    # loop over each row of sample data
-    for sample in lines:
-        # create the court, walls, and lines
-        court.create_court()
-        court.draw_walls()
-        court.overlay_midcourt_line()
-        court.overlay_target_zones()
+    # receive data
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.connect((HOST, PORT))
 
-        # parse sample data
-        balls = parse_sample(sample)
+        while True:
+            data = s.recv(1024)
+            data = data.decode('ascii').strip()
+            print(data)
+            match = "^P=\[(\S*?)\],A=\[(\S*?);(\S*?);(\S*?);(\S*?)\],B=\[(\S*?);(\S*?);(\S*?);(\S*?)\]\Z"
+            r = re.search(match, data)
 
-        if len(balls) == 0:
-            break
+            # extract the ball coordinates
+            try:
+                balls_str = [r.group(1),  # p
+                             r.group(2),  # a1
+                             r.group(3),  # a2
+                             r.group(4),  # a3
+                             r.group(5),  # a4
+                             r.group(6),  # b1
+                             r.group(7),  # b2
+                             r.group(8),  # b3
+                             r.group(9)]  # b4
+            except AttributeError:
+                s.send(b"parse error")
+                print("parse error")
+                continue
 
-        # filter None values out of list
-        p = list(filter(None, [balls[0]]))
-        r = list(filter(None, balls[1:5]))
-        b = list(filter(None, balls[5:9]))
+            # extract the coordinates
+            balls = []
+            for b in balls_str:
+                if b == "None":
+                    balls.append(None)
+                else:
+                    match = "\((\S*?),(\S*?)\)"
+                    r = re.search(match, b)
+                    try:
+                        x = float(r.group(1))
+                        y = float(r.group(2))
+                        balls.append((x, y))
+                    except:
+                        balls.append(None)
 
-        # update our centroid trackers
-        pallinos = p_ct.update(p)
-        reds = r_ct.update(r)
-        blues = b_ct.update(b)
+            # debug
+            s.send(b"bocce")
 
-        # loop over the tracked objects
-        for (objectID, centroid) in pallinos.items():
-            if objectID not in pallino_objectIDs:
-                # add the object to the set
-                pallino_objectIDs[objectID] = Pallino(objectID, PALLINO_COLOR)
+            # create the court, walls, and lines
+            court.create_court()
+            court.draw_walls()
+            court.overlay_midcourt_line()
+            court.overlay_target_zones()
 
-            pallino_objectIDs[objectID].add_coord_sensor(centroid)
-            pallino_objectIDs[objectID].sensor_to_smoothed_court_coord()
-            court.draw_pallino(pallino_objectIDs[objectID].coord_court_imperial, pallino_objectIDs[objectID].color)
+            if len(balls) == 0:
+                continue
 
+            # filter None values out of list
+            p = list(filter(None, [balls[0]]))
+            r = list(filter(None, balls[1:5]))
+            b = list(filter(None, balls[5:9]))
 
-        # loop over the tracked objects
-        for (objectID, centroid) in blues.items():
-            if objectID not in blue_objectIDs:
-                # add the object to the set
-                blue_objectIDs[objectID] = Bocce(objectID, BOCCE_A_COLOR)
+            # update our centroid trackers
+            pallinos = p_ct.update(p)
+            reds = r_ct.update(r)
+            blues = b_ct.update(b)
 
-            blue_objectIDs[objectID].add_coord_sensor(centroid)
-            blue_objectIDs[objectID].sensor_to_smoothed_court_coord()
-            court.draw_bocce(blue_objectIDs[objectID].coord_court_imperial, blue_objectIDs[objectID].color)
-            if blue_objectIDs[objectID].isMoving:
-                court.indicate_moving(blue_objectIDs[objectID].coord_court_imperial)
+            # loop over the tracked objects
+            for (objectID, centroid) in pallinos.items():
+                if objectID not in pallino_objectIDs:
+                    # add the object to the set
+                    pallino_objectIDs[objectID] = Pallino(objectID, PALLINO_COLOR)
 
-        # loop over the tracked objects
-        for (objectID, centroid) in reds.items():
-            if objectID not in red_objectIDs:
-                # add the object to the set
-                red_objectIDs[objectID] = Bocce(objectID, BOCCE_B_COLOR)
+                pallino_objectIDs[objectID].add_coord_sensor(centroid)
+                pallino_objectIDs[objectID].sensor_to_smoothed_court_coord()
+                court.draw_pallino(pallino_objectIDs[objectID].coord_court_imperial, pallino_objectIDs[objectID].color)
 
-            red_objectIDs[objectID].add_coord_sensor(centroid)
-            red_objectIDs[objectID].sensor_to_smoothed_court_coord()
-            court.draw_bocce(red_objectIDs[objectID].coord_court_imperial, red_objectIDs[objectID].color)
-            if red_objectIDs[objectID].isMoving:
-                court.indicate_moving(red_objectIDs[objectID].coord_court_imperial)
+            # loop over the tracked objects
+            for (objectID, centroid) in blues.items():
+                if objectID not in blue_objectIDs:
+                    # add the object to the set
+                    blue_objectIDs[objectID] = Bocce(objectID, BOCCE_A_COLOR)
 
-        # display and capture keypress
-        cv2.imshow("bocce court", court.court)
-        key = cv2.waitKey(1)
+                blue_objectIDs[objectID].add_coord_sensor(centroid)
+                blue_objectIDs[objectID].sensor_to_smoothed_court_coord()
+                court.draw_bocce(blue_objectIDs[objectID].coord_court_imperial, blue_objectIDs[objectID].color)
+                if blue_objectIDs[objectID].isMoving:
+                    court.indicate_moving(blue_objectIDs[objectID].coord_court_imperial)
 
-        # display court until "q" button pressed
-        if key == ord("q"):
-            cv2.destroyAllWindows()
-            exit(1)
+            # loop over the tracked objects
+            for (objectID, centroid) in reds.items():
+                if objectID not in red_objectIDs:
+                    # add the object to the set
+                    red_objectIDs[objectID] = Bocce(objectID, BOCCE_B_COLOR)
+
+                red_objectIDs[objectID].add_coord_sensor(centroid)
+                red_objectIDs[objectID].sensor_to_smoothed_court_coord()
+                court.draw_bocce(red_objectIDs[objectID].coord_court_imperial, red_objectIDs[objectID].color)
+                if red_objectIDs[objectID].isMoving:
+                    court.indicate_moving(red_objectIDs[objectID].coord_court_imperial)
+
+            # display and capture keypress
+            cv2.imshow("bocce court", court.court)
+            key = cv2.waitKey(1)
+
+            # display court until "q" button pressed
+            if key == ord("q"):
+                cv2.destroyAllWindows()
+                exit(1)
+
+        s.close()
 

@@ -10,7 +10,7 @@ CAMERA_CENTER_PIXELS = (CAMERA_RESOLUTION_PIXELS[0] / 2, CAMERA_RESOLUTION_PIXEL
 CAMERA_CENTER_TRANSLATION_FEET = (0, 8.75)
 
 # FIFO Queue
-COORD_SENSOR_QUEUE_LENGTH = 50
+COORD_SENSOR_QUEUE_LENGTH = 30
 
 # min max difference to determine if a ball is moving
 # 11 sensor pixels is an inch, so going with approximately half of that
