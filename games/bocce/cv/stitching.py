@@ -5,7 +5,7 @@ import imutils
 # typically we'll import modularly
 try:
     from games.bocce.cv.pyimagesearch.panorama import Stitcher
-    from camera.camera import ImageZMQCamera
+    from games.camera.camera import ImageZMQCamera
     unit_test = False
 
 # otherwise, we're running main test code at the bottom of this script

@@ -1,5 +1,5 @@
 # imports
-from pyimagesearch.centroidtracker import CentroidTracker
+from lib.centroidtracker import CentroidTracker
 import re
 import numpy as np
 import cv2

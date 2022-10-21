@@ -4,7 +4,6 @@ import cv2
 import imutils
 import argparse
 import numpy as np
-import time
 from pyimagesearch.descriptors.histogram import Histogram
 from sklearn.cluster import KMeans
 from scipy.spatial import distance as dist

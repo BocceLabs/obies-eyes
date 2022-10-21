@@ -8,6 +8,7 @@ import numpy as np
 import multiprocessing as mp
 from datetime import datetime
 import os
+from vimba import *
 
 VIDEO_DIR = "videos"
 
@@ -114,6 +115,26 @@ class Camera:
 
     def _close_camera(self):
         pass
+
+
+class VimbaCamera(Camera):
+    def __init__(self, name=None, source=None, flip=False, *args, **kwargs):
+        super(VimbaCamera, self).__init__(*args, **kwargs)
+        self.cam_id = "DEV_000F315DAB39"
+        self.cam = None
+
+    def initialize(self):
+        with Vimba.get_instance() as vimba:
+            self.cam = vimba.get_camera_by_id(self.cam_id)
+
+    def _get_frame(self):
+        with Vimba.get_instance() as vimba:
+            with self.cam:
+                #self.cam.set_pixel_format(PixelFormat.Bgr8)
+                frame = self.cam.get_frame()
+                frame.convert_pixel_format(PixelFormat.Bgra8)
+                frame = frame.as_opencv_image()
+                return frame
 
 
 class USBCamera(Camera):
@@ -305,3 +326,14 @@ class VideoStreamSubscriber:
 
     def close(self):
         self._stop = True
+
+if __name__ == "__main__":
+    v = VimbaCamera("test")
+    v.initialize()
+    while True:
+        frame = v._get_frame()
+        cv2.imshow('frame', frame)
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord("q"):
+            break
+        time.sleep(.03)

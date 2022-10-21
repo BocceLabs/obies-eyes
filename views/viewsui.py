@@ -21,7 +21,7 @@ from games.bocce.court import Court
 from games.bocce.team import Team
 from games.bocce.person import Player, Umpire
 from games.bocce.game import Game
-from games.camera.camera import USBCamera, RTSPCamera, PubSubImageZMQCamera, ImageZMQCamera
+from games.camera.camera import USBCamera, RTSPCamera, PubSubImageZMQCamera, ImageZMQCamera, VimbaCamera
 
 # video production imports (as A_____ accordingly)
 from video_production.annotations.score import Score as AScore
@@ -293,6 +293,10 @@ class MainWindow(QtWidgets.QMainWindow):
                     if getattr(self, "{}".format(t[0])) is None:
                         setattr(self, t[0], ImageZMQCamera(name=cam_name,
                             source=str(t[4]), flip=t[2]))
+                elif t[3] == "VimbaCamera":
+                    if getattr(self, "{}".format(t[0])) is None:
+                        setattr(self, t[0], VimbaCamera(name=cam_name,
+                            source=int(t[4]), flip=t[2]))
 
                 # initialize the camera
                 getattr(self, t[0]).initialize()

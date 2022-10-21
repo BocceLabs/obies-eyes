@@ -4,7 +4,7 @@ import cv2
 import PIL
 import random
 import re
-from pyimagesearch.centroidtracker import CentroidTracker
+from lib.centroidtracker import CentroidTracker
 import imutils
 
 # dimension multiplier

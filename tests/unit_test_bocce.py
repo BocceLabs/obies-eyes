@@ -11,10 +11,8 @@ from games.bocce.venue import Venue
 from games.bocce.court import Court
 from games.bocce.team import Team
 from games.bocce.person import Player, Umpire
-from games.bocce.throw import Throw
-from games.bocce.frame import Frame
 from games.bocce.game import Game
-from games.camera.camera import USBCamera, RTSPCamera, PubSubImageZMQCamera
+from games.camera.camera import USBCamera
 
 # create a venue
 print("\n[INFO] Creating a venue...")

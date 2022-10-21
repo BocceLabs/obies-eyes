@@ -1,8 +1,10 @@
 opencv-contrib-python
-opencv-python-headless
 imutils
 PyQt5
 PySide2
 QtPy
 pillow
 imagezmq
+requests
+scipy
+scikit-learn

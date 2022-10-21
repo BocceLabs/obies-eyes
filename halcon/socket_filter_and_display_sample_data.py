@@ -1,5 +1,5 @@
 # imports
-from pyimagesearch.centroidtracker import CentroidTracker
+from lib.centroidtracker import CentroidTracker
 from scipy.spatial import distance as dist
 import requests
 import socket
@@ -135,27 +135,38 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             cv2.circle(canvas, (int(centroid[0]/divisor), int(centroid[1]/divisor)), 8, blue_azure, -1)
 
         # calculate Red distances
-        redDistances = []
-        for (objectID, centroid) in reds.items():
-            redDistances.append(dist.euclidean(centroid, pallinos[0]))
+        try:
+            pallinos[0]
+            redDistances = []
+            for (objectID, centroid) in reds.items():
+                redDistances.append(dist.euclidean(centroid, pallinos[0]))
 
-        # sort red distances
-        redDistances = sorted(redDistances, key=float)
+            # sort red distances
+            redDistances = sorted(redDistances, key=float)
 
-        # calculate Blue distances
-        blueDistances = []
-        for (objectID, centroid) in reds.items():
-            blueDistances.append(dist.euclidean(centroid, pallinos[0]))
+            # calculate Blue distances
+            blueDistances = []
+            for (objectID, centroid) in reds.items():
+                blueDistances.append(dist.euclidean(centroid, pallinos[0]))
 
-        # sort blue distances
-        blueDistances = sorted(blueDistances, key=float)
+            # sort blue distances
+            blueDistances = sorted(blueDistances, key=float)
 
-        closer = 2
-        if len(redDistances) >= 1 and len(blueDistances) >= 1:
-            closer = 1 if redDistances[0] < blueDistances[0] else 0
+            if len(redDistances) >= 1 and len(blueDistances) >= 1:
+                if redDistances[0] < blueDistances[0]:
+                    print("Red is closer")
+                    closer = 1
+                elif blueDistances[0] < redDistances[0]:
+                    print("Blue is closer")
+                    closer = 0
+                else:
+                    closer = 2
+        except:
+            print("No pallino")
+            closer = 2
 
         try:
-            requests.post("http://192.168.2.42:8080/setscore/A/0,0,{}".format(closer))
+            requests.post("http://192.168.2.16:8080/setscore/A/0,0,{}".format(closer))
         except Exception as e:
             print("Exception {}".format(str(e)))
 
