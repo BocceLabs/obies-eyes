@@ -1,3 +1,5 @@
+import os
+
 RADIUS_BOCCE = 26
 RADIUS_PALLINO = 9
 
@@ -13,3 +15,5 @@ COLOR_RED = (0, 0, 255)
 
 CAMERA_LEFT = 'DEV_000F315DAB39'
 CAMERA_RIGHT = 'DEV_000F315DAB70'
+
+BOCCE_MODEL_PATH = os.path.join("ball_training", "image-classification-keras", "bocce.model")

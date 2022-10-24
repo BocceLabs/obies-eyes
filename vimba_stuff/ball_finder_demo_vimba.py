@@ -1,7 +1,7 @@
-from vimba import *
-import cv2
 from circles import draw_circles, extract_circle_contours, find_circles, balls_to_disk
 from lib.centroidtracker import CentroidTracker
+from vimba import *
+import cv2
 import time
 import config
 
@@ -35,17 +35,15 @@ with Vimba.get_instance() as vimba:
             circles_pallino = find_circles(frame.copy(), config.RADIUS_PALLINO, config.RADIUS_PALLINO_TOLERANCE)
             balls_dict_pallino = extract_circle_contours(circles_pallino, frame, config.RADIUS_PALLINO)
 
-            # write the ball ROI to disk
-            balls_to_disk(balls_dict_bocce)
-            balls_to_disk(balls_dict_pallino)
-            # todo classify the bocce/pallino contours
+            # write the ball ROI to disk IF you need data for classification training
+            # balls_to_disk(balls_dict_bocce)
+            # balls_to_disk(balls_dict_pallino)
 
-
-
-            # draw the circles
-            ball_circles = [(circles_bocce, config.RADIUS_BOCCE, config.COLOR_GREEN),
-                            (circles_pallino, config.RADIUS_PALLINO, config.COLOR_RED)]
-            disp_frame = draw_circles(ball_circles, frame.copy())
+            # draw the unclassified circles
+            # ball_circles = [(circles_bocce, config.RADIUS_BOCCE, config.COLOR_GREEN),
+            #                 (circles_pallino, config.RADIUS_PALLINO, config.COLOR_RED)]
+            # disp_frame = draw_circles(ball_circles, frame.copy())
+            disp_frame = frame.copy()
 
             # update the centroid tracker
             bocce_ball_coords = []

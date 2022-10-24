@@ -1,10 +1,30 @@
+from tensorflow.keras.preprocessing.image import img_to_array
+from tensorflow.keras.models import load_model
 import cv2
 import numpy as np
 import uuid
 import os
 import config
 
+# load the trained convolutional neural network
+MODEL = load_model(config.BOCCE_MODEL_PATH)
+
 P = config.RADIUS_BALL_ROI_PADDING
+
+
+def preprocess(circle_roi):
+    # pre-process the image for classification
+    image = cv2.resize(circle_roi, (28, 28))
+    image = image.astype("float") / 255.0
+    image = img_to_array(image)
+    image = np.expand_dims(image, axis=0)
+    return image
+
+
+def inference(circle_roi):
+    preprocessed_roi = preprocess(circle_roi)
+    (notBocce, bocce) = MODEL.predict(preprocessed_roi)[0]
+    return True if bocce > notBocce else False
 
 
 def find_circles(frame, radius, radius_tolerance):
@@ -63,16 +83,25 @@ def extract_circle_contours(circles, frame, radius):
         # crop out the masked ball
         masked_cropped = masked[y-r:y+r, x-r:x+r]
 
-        # todo this can be used for training a classifier, so it would be good to log these to disk and
-        # todo potentially perform the classification right here
+        # cropped area
         cropped = frame[y-radius-P:y+radius+P, x-radius-P:x+radius+P]
 
-        # create a dictionary consisting of the center coord and the roi mask
-        balls[i] = {
-            "coord": (x, y),
-            "roi": cropped,
-            "roi_mask": masked_cropped
-        }
+        # perform classification
+        try:
+            is_bocce = inference(cropped)
+        except:
+            is_bocce = False
+
+        if is_bocce:
+            # create a dictionary consisting of the center coord and the roi mask
+            balls[i] = {
+                "coord": (x, y),
+                "roi": cropped,
+                "roi_mask": masked_cropped
+            }
+
+        else:
+            continue
 
     return balls
 
