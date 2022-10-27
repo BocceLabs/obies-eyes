@@ -8,3 +8,5 @@ imagezmq
 requests
 scipy
 scikit-learn
+matplotlib
+tensorflow

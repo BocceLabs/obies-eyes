@@ -10,7 +10,7 @@ import argparse
 import imutils
 import cv2
 
-# construct the argument parse and parse the arguments
+# construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-m", "--model", required=True,
 	help="path to trained model model")
