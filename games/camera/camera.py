@@ -10,7 +10,7 @@ from datetime import datetime
 import os
 from vimba import *
 
-VIDEO_DIR = "videos"
+VIDEO_DIR = os.path.join(".", "videos")
 
 MAX_RECORDING_RESTARTS = 8
 
@@ -120,17 +120,19 @@ class Camera:
 class VimbaCamera(Camera):
     def __init__(self, name=None, source=None, flip=False, *args, **kwargs):
         super(VimbaCamera, self).__init__(*args, **kwargs)
-        self.cam_id = "DEV_000F315DAB39"
+        self.name = name
+        self.source = source
         self.cam = None
 
     def initialize(self):
-        with Vimba.get_instance() as vimba:
-            self.cam = vimba.get_camera_by_id(self.cam_id)
+        self.get_frame()
 
     def _get_frame(self):
+
         with Vimba.get_instance() as vimba:
+            self.cam = vimba.get_camera_by_id(self.source)
+
             with self.cam:
-                #self.cam.set_pixel_format(PixelFormat.Bgr8)
                 frame = self.cam.get_frame()
                 frame.convert_pixel_format(PixelFormat.Bgra8)
                 frame = frame.as_opencv_image()

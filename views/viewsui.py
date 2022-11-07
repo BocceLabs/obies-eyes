@@ -153,11 +153,9 @@ class MainWindow(QtWidgets.QMainWindow):
         # game controls (in future will be automated)
         self.pushButton_start_game.setEnabled(False)
         self.pushButton_start_frame.setEnabled(False)
-        self.pushButton_throw.setEnabled(False)
         self.pushButton_end_frame.setEnabled(False)
         self.pushButton_start_game.clicked.connect(self.start_game)
         self.pushButton_start_frame.clicked.connect(self.start_frame)
-        self.pushButton_throw.clicked.connect(self.throw)
         self.pushButton_end_frame.clicked.connect(self.end_frame)
 
     def closeEvent(self, event):
@@ -296,7 +294,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 elif t[3] == "VimbaCamera":
                     if getattr(self, "{}".format(t[0])) is None:
                         setattr(self, t[0], VimbaCamera(name=cam_name,
-                            source=int(t[4]), flip=t[2]))
+                            source=t[4], flip=t[2]))
 
                 # initialize the camera
                 getattr(self, t[0]).initialize()
@@ -580,8 +578,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def start_game(self):
         # reset score info
         self.tableWidget_frame_score.setRowCount(0)
-        self.lcdNumber_frame_score_teamHome.display(str(0))
-        self.lcdNumber_frame_score_teamAway.display(str(0))
         self.lcdNumber_game_score_teamHome.display(str(0))
         self.lcdNumber_game_score_teamAway.display(str(0))
 
@@ -698,13 +694,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tableWidget_frame_score.item(0, 2).setForeground(
             QColor(color[2], color[1], color[0]))
         self.set_frame_winner_check(frameWinnerTeam)
-
-        if frameWinnerTeam == self.g.teamHome:
-            self.lcdNumber_frame_score_teamHome.display(str(framePoints))
-            self.lcdNumber_frame_score_teamAway.display(str(0))
-        elif frameWinnerTeam == self.g.teamAway:
-            self.lcdNumber_frame_score_teamAway.display(str(framePoints))
-            self.lcdNumber_frame_score_teamHome.display(str(0))
 
         # game score #######################
         self.set_game_score_palette(self.g.teamHome, self.g.teamAway)

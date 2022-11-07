@@ -1,8 +1,8 @@
 opencv-contrib-python
 imutils
 PyQt5
-PySide2
-QtPy
+#PySide2
+#QtPy
 pillow
 imagezmq
 requests
@@ -10,3 +10,5 @@ scipy
 scikit-learn
 matplotlib
 tensorflow
+pyqt5
+pyqt5-tools
