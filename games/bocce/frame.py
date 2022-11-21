@@ -1,6 +1,5 @@
 # imports
 from .ball import Pallino
-from .throw import Throw
 from .cv.ballfinder import BallFinder
 from scipy.spatial import distance as dist
 
@@ -13,8 +12,6 @@ class Frame:
         teamHome, teamAway, cam):
 
         self.frameNumer = frameNumber
-        self.throwingEnd = throwingEnd
-        self.frameWinner = None
 
         self.pallinoThrowingTeam = pallinoThrowingTeam
         self.teamHome = teamHome
@@ -28,16 +25,6 @@ class Frame:
         self.whoseIn = None
         self.inPoints = 0
         self.framePoints = 0
-
-        #### throws ####
-        self.throw = None
-        self.throws = []
-        self.first_bocce_thrown = False
-        self.second_bocce_thrown = False
-        self.numThrowsTeamHome = 0
-        self.numThrowsTeamAway = 0
-
-        self.throw_trigger = False
 
         self.num_total_team_balls = None
 
@@ -156,56 +143,6 @@ class Frame:
                 numBalls -= 1
 
         return numBalls
-
-    def handle_throw(self):
-        if not self.pallino.isThrown:
-            # throw the pallino
-            self.throw_pallino(self.pallinoThrowingTeam)
-
-            # check to see if the pallino is in play
-            if not self.pallinoInPlay:
-                # swap pallino throwing team
-                if self.pallinoThrowingTeam == self.teamHome:
-                    self.pallinoThrowingTeam = self.teamAway
-                elif self.pallinoThrowingTeam == self.teamAway:
-                    self.pallinoThrowingTeam = self.teamHome
-
-                # indicate that the pallino hasn't been thrown
-                self.pallino.isThrown = False
-                return
-            return
-
-        # the pallino thrower NEEDS to throw their first ball
-        if not self.first_bocce_thrown:
-            self.throw_bocce(self.pallinoThrowingTeam,
-                             followPallino=True)
-            self.first_bocce_thrown = True
-            self.update_in_points(1) # force to one point
-            self.first_bocce_thrown = True
-            return
-
-        # the other team ALWAYS throws their first ball next
-        if not self.second_bocce_thrown:
-            print("The other team ALWAYS throws their first ball next")
-            self.throw_bocce(self.get_other_team(self.pallinoThrowingTeam), followPallino=False)
-            self.second_bocce_thrown = True
-            # todo we need to determine who is in but kmeans fails if all dff ball nums = 1
-            self.update_in_points(1)
-            return
-
-        else:
-            if self.either_team_has_balls():
-                # throw all remaining balls
-                self.inPoints, self.whoseIn = self.determine_whose_in(self.cam)
-
-                # the other team (furthest team) throws
-                valid = self.throw_bocce(self.get_other_team(self.whoseIn),
-                                             followPallino=False)
-
-            else:
-                print("Please score the frame")
-                # if we reach this, then the frame is done, so cleanup
-                self.set_frame_points(self.whoseIn, self.inPoints)
 
     def get_other_team(self, team):
         if team == self.teamHome:

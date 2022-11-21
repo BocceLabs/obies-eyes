@@ -70,8 +70,17 @@
         <height>20</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>Luckiest Guy</family>
+        <kerning>true</kerning>
+       </font>
+      </property>
       <property name="text">
        <string>cam1</string>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
       </property>
       <property name="checked">
        <bool>true</bool>
@@ -91,209 +100,6 @@
       </property>
       <property name="text">
        <string>cam2</string>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="radioButton_cam3">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>230</x>
-        <y>30</y>
-        <width>100</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>cam3</string>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="radioButton_cam7">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>230</x>
-        <y>60</y>
-        <width>100</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>cam7</string>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="radioButton_cam4">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>340</x>
-        <y>30</y>
-        <width>100</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>cam4</string>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="radioButton_cam5">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>60</y>
-        <width>100</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>cam5</string>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="radioButton_cam6">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>120</x>
-        <y>60</y>
-        <width>111</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>cam6</string>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="radioButton_cam8">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>340</x>
-        <y>60</y>
-        <width>100</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>cam8</string>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QGroupBox" name="groupBox_annotations">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>100</y>
-       <width>831</width>
-       <height>91</height>
-      </rect>
-     </property>
-     <property name="title">
-      <string>Annotations</string>
-     </property>
-     <property name="checkable">
-      <bool>false</bool>
-     </property>
-     <widget class="QCheckBox" name="checkBox_annotation_venue">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>30</y>
-        <width>86</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Venue</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="checkBox_annotation_team">
-      <property name="geometry">
-       <rect>
-        <x>100</x>
-        <y>30</y>
-        <width>86</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Team</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="checkBox_annotation_player">
-      <property name="geometry">
-       <rect>
-        <x>180</x>
-        <y>30</y>
-        <width>86</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Player</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="checkBox_annotation_balltrails">
-      <property name="geometry">
-       <rect>
-        <x>100</x>
-        <y>60</y>
-        <width>101</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Ball Trails</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="checkBox_annotation_score">
-      <property name="geometry">
-       <rect>
-        <x>270</x>
-        <y>30</y>
-        <width>86</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Score</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="checkBox_annotation_time">
-      <property name="geometry">
-       <rect>
-        <x>360</x>
-        <y>30</y>
-        <width>86</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Time</string>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="checkBox_annotation_vectors">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>60</y>
-        <width>86</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Vectors</string>
       </property>
      </widget>
     </widget>
@@ -316,52 +122,13 @@
       <number>0</number>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_record">
-     <property name="geometry">
-      <rect>
-       <x>340</x>
-       <y>760</y>
-       <width>151</width>
-       <height>51</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>record active cams</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton_start_frame">
-     <property name="geometry">
-      <rect>
-       <x>1100</x>
-       <y>770</y>
-       <width>151</width>
-       <height>51</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Start Frame</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton_end_frame">
-     <property name="geometry">
-      <rect>
-       <x>1330</x>
-       <y>770</y>
-       <width>151</width>
-       <height>51</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>End Frame</string>
-     </property>
-    </widget>
     <widget class="QGroupBox" name="groupBox_score">
      <property name="geometry">
       <rect>
        <x>850</x>
        <y>10</y>
        <width>631</width>
-       <height>571</height>
+       <height>541</height>
       </rect>
      </property>
      <property name="title">
@@ -703,7 +470,7 @@
         <x>10</x>
         <y>100</y>
         <width>611</width>
-        <height>291</height>
+        <height>421</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
@@ -727,6 +494,9 @@
         <widget class="QLabel" name="label_away_closesttopallino_check">
          <property name="text">
           <string/>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
          </property>
         </widget>
        </item>
@@ -754,6 +524,9 @@
          <property name="text">
           <string>0.0</string>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item row="2" column="0">
@@ -780,12 +553,18 @@
          <property name="text">
           <string>0.0</string>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item row="3" column="1">
         <widget class="QLabel" name="label_home_closesttopallino_check">
          <property name="text">
           <string/>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
          </property>
         </widget>
        </item>
@@ -843,6 +622,12 @@
        </item>
        <item row="1" column="1">
         <widget class="QLCDNumber" name="lcdNumber_game_score_teamHome">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>80</height>
+          </size>
+         </property>
          <property name="palette">
           <palette>
            <active>
@@ -887,6 +672,12 @@
        </item>
        <item row="1" column="2">
         <widget class="QLCDNumber" name="lcdNumber_game_score_teamAway">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>80</height>
+          </size>
+         </property>
          <property name="palette">
           <palette>
            <active>
@@ -1121,785 +912,18 @@
        </item>
       </layout>
      </widget>
-     <widget class="QTableWidget" name="tableWidget_frame_score">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>400</y>
-        <width>631</width>
-        <height>151</height>
-       </rect>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="font">
-       <font>
-        <family>Courier New</family>
-        <pointsize>18</pointsize>
-       </font>
-      </property>
-      <property name="sizeAdjustPolicy">
-       <enum>QAbstractScrollArea::AdjustToContents</enum>
-      </property>
-      <property name="alternatingRowColors">
-       <bool>true</bool>
-      </property>
-      <property name="showGrid">
-       <bool>true</bool>
-      </property>
-      <property name="rowCount">
-       <number>0</number>
-      </property>
-      <property name="columnCount">
-       <number>3</number>
-      </property>
-      <attribute name="horizontalHeaderMinimumSectionSize">
-       <number>30</number>
-      </attribute>
-      <attribute name="horizontalHeaderDefaultSectionSize">
-       <number>90</number>
-      </attribute>
-      <attribute name="horizontalHeaderStretchLastSection">
-       <bool>true</bool>
-      </attribute>
-      <attribute name="verticalHeaderVisible">
-       <bool>false</bool>
-      </attribute>
-      <attribute name="verticalHeaderMinimumSectionSize">
-       <number>30</number>
-      </attribute>
-      <attribute name="verticalHeaderDefaultSectionSize">
-       <number>30</number>
-      </attribute>
-      <attribute name="verticalHeaderShowSortIndicator" stdset="0">
-       <bool>false</bool>
-      </attribute>
-      <column>
-       <property name="text">
-        <string>Frame</string>
-       </property>
-       <property name="font">
-        <font>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="textAlignment">
-        <set>AlignLeading|AlignVCenter</set>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Points</string>
-       </property>
-       <property name="font">
-        <font>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>W-Team</string>
-       </property>
-       <property name="font">
-        <font>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-      </column>
-     </widget>
-    </widget>
-    <widget class="QGroupBox" name="groupBox">
-     <property name="geometry">
-      <rect>
-       <x>850</x>
-       <y>590</y>
-       <width>631</width>
-       <height>161</height>
-      </rect>
-     </property>
-     <property name="title">
-      <string>Status</string>
-     </property>
-     <widget class="QLabel" name="label">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>30</y>
-        <width>611</width>
-        <height>61</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <family>Courier New</family>
-        <pointsize>14</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>TextLabel</string>
-      </property>
-      <property name="wordWrap">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QLabel" name="label_rec_indicator">
-     <property name="geometry">
-      <rect>
-       <x>720</x>
-       <y>765</y>
-       <width>58</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>🔴 REC</string>
-     </property>
     </widget>
     <widget class="QPushButton" name="pushButton_start_game">
      <property name="geometry">
       <rect>
-       <x>890</x>
-       <y>770</y>
+       <x>1120</x>
+       <y>570</y>
        <width>151</width>
        <height>51</height>
       </rect>
      </property>
      <property name="text">
-      <string>Start Game</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton_stop_recording">
-     <property name="geometry">
-      <rect>
-       <x>500</x>
-       <y>760</y>
-       <width>181</width>
-       <height>51</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>❌ Stop Recording</string>
-     </property>
-    </widget>
-   </widget>
-   <widget class="QWidget" name="tab_config">
-    <attribute name="title">
-     <string>config</string>
-    </attribute>
-    <widget class="QTableWidget" name="tableWidget_cameras">
-     <property name="geometry">
-      <rect>
-       <x>70</x>
-       <y>50</y>
-       <width>1021</width>
-       <height>271</height>
-      </rect>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>600</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="sizeIncrement">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="font">
-      <font>
-       <family>Arial</family>
-      </font>
-     </property>
-     <property name="autoFillBackground">
-      <bool>false</bool>
-     </property>
-     <property name="alternatingRowColors">
-      <bool>true</bool>
-     </property>
-     <property name="cornerButtonEnabled">
-      <bool>true</bool>
-     </property>
-     <attribute name="horizontalHeaderCascadingSectionResizes">
-      <bool>true</bool>
-     </attribute>
-     <attribute name="horizontalHeaderMinimumSectionSize">
-      <number>18</number>
-     </attribute>
-     <attribute name="horizontalHeaderDefaultSectionSize">
-      <number>180</number>
-     </attribute>
-     <attribute name="horizontalHeaderHighlightSections">
-      <bool>true</bool>
-     </attribute>
-     <attribute name="horizontalHeaderStretchLastSection">
-      <bool>true</bool>
-     </attribute>
-     <attribute name="verticalHeaderStretchLastSection">
-      <bool>false</bool>
-     </attribute>
-     <row>
-      <property name="text">
-       <string>1</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>2</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>3</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>4</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>5</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>6</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>7</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>8</string>
-      </property>
-     </row>
-     <column>
-      <property name="text">
-       <string>Active</string>
-      </property>
-      <property name="textAlignment">
-       <set>AlignLeading|AlignVCenter</set>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Flip</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Source Type</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Source</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Source Name</string>
-      </property>
-     </column>
-     <item row="0" column="0">
-      <property name="text">
-       <string/>
-      </property>
-      <property name="checkState">
-       <enum>Checked</enum>
-      </property>
-      <property name="flags">
-       <set>ItemIsSelectable|ItemIsDragEnabled|ItemIsDropEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
-      </property>
-     </item>
-     <item row="0" column="1">
-      <property name="text">
-       <string/>
-      </property>
-      <property name="checkState">
-       <enum>Checked</enum>
-      </property>
-     </item>
-     <item row="0" column="2">
-      <property name="text">
-       <string>VimbaCamera</string>
-      </property>
-     </item>
-     <item row="0" column="3">
-      <property name="text">
-       <string>DEV_000F315DAB70</string>
-      </property>
-     </item>
-     <item row="0" column="4">
-      <property name="text">
-       <string>Left</string>
-      </property>
-     </item>
-     <item row="1" column="0">
-      <property name="text">
-       <string/>
-      </property>
-      <property name="checkState">
-       <enum>Checked</enum>
-      </property>
-      <property name="flags">
-       <set>ItemIsSelectable|ItemIsDragEnabled|ItemIsDropEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
-      </property>
-     </item>
-     <item row="1" column="1">
-      <property name="text">
-       <string/>
-      </property>
-      <property name="checkState">
-       <enum>Checked</enum>
-      </property>
-     </item>
-     <item row="1" column="2">
-      <property name="text">
-       <string>VimbaCamera</string>
-      </property>
-     </item>
-     <item row="1" column="3">
-      <property name="text">
-       <string>DEV_000F315DAB39</string>
-      </property>
-     </item>
-     <item row="1" column="4">
-      <property name="text">
-       <string>Right</string>
-      </property>
-     </item>
-     <item row="2" column="0">
-      <property name="text">
-       <string/>
-      </property>
-      <property name="checkState">
-       <enum>Checked</enum>
-      </property>
-      <property name="flags">
-       <set>ItemIsSelectable|ItemIsDragEnabled|ItemIsDropEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
-      </property>
-     </item>
-     <item row="2" column="1">
-      <property name="text">
-       <string/>
-      </property>
-      <property name="checkState">
-       <enum>Checked</enum>
-      </property>
-     </item>
-     <item row="2" column="2">
-      <property name="text">
-       <string/>
-      </property>
-     </item>
-     <item row="2" column="3">
-      <property name="text">
-       <string/>
-      </property>
-     </item>
-     <item row="2" column="4">
-      <property name="text">
-       <string/>
-      </property>
-     </item>
-     <item row="3" column="0">
-      <property name="text">
-       <string/>
-      </property>
-      <property name="checkState">
-       <enum>Checked</enum>
-      </property>
-      <property name="flags">
-       <set>ItemIsSelectable|ItemIsDragEnabled|ItemIsDropEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
-      </property>
-     </item>
-     <item row="3" column="1">
-      <property name="text">
-       <string/>
-      </property>
-      <property name="checkState">
-       <enum>Checked</enum>
-      </property>
-     </item>
-     <item row="3" column="2">
-      <property name="text">
-       <string/>
-      </property>
-     </item>
-     <item row="3" column="3">
-      <property name="text">
-       <string/>
-      </property>
-     </item>
-     <item row="3" column="4">
-      <property name="text">
-       <string/>
-      </property>
-     </item>
-     <item row="4" column="0">
-      <property name="text">
-       <string/>
-      </property>
-      <property name="checkState">
-       <enum>Checked</enum>
-      </property>
-      <property name="flags">
-       <set>ItemIsSelectable|ItemIsDragEnabled|ItemIsDropEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
-      </property>
-     </item>
-     <item row="4" column="1">
-      <property name="text">
-       <string/>
-      </property>
-      <property name="checkState">
-       <enum>Checked</enum>
-      </property>
-     </item>
-     <item row="4" column="2">
-      <property name="text">
-       <string/>
-      </property>
-     </item>
-     <item row="4" column="3">
-      <property name="text">
-       <string/>
-      </property>
-     </item>
-     <item row="4" column="4">
-      <property name="text">
-       <string/>
-      </property>
-     </item>
-     <item row="5" column="0">
-      <property name="text">
-       <string/>
-      </property>
-      <property name="checkState">
-       <enum>Checked</enum>
-      </property>
-      <property name="flags">
-       <set>ItemIsSelectable|ItemIsDragEnabled|ItemIsDropEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
-      </property>
-     </item>
-     <item row="5" column="1">
-      <property name="text">
-       <string/>
-      </property>
-      <property name="checkState">
-       <enum>Checked</enum>
-      </property>
-     </item>
-     <item row="5" column="2">
-      <property name="text">
-       <string/>
-      </property>
-     </item>
-     <item row="5" column="3">
-      <property name="text">
-       <string/>
-      </property>
-     </item>
-     <item row="5" column="4">
-      <property name="text">
-       <string/>
-      </property>
-     </item>
-     <item row="6" column="0">
-      <property name="text">
-       <string/>
-      </property>
-      <property name="checkState">
-       <enum>Checked</enum>
-      </property>
-      <property name="flags">
-       <set>ItemIsSelectable|ItemIsDragEnabled|ItemIsDropEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
-      </property>
-     </item>
-     <item row="6" column="1">
-      <property name="text">
-       <string/>
-      </property>
-      <property name="checkState">
-       <enum>Checked</enum>
-      </property>
-     </item>
-     <item row="6" column="2">
-      <property name="text">
-       <string>USBCamera</string>
-      </property>
-     </item>
-     <item row="6" column="3">
-      <property name="text">
-       <string>0</string>
-      </property>
-     </item>
-     <item row="6" column="4">
-      <property name="text">
-       <string>USB0</string>
-      </property>
-     </item>
-     <item row="7" column="0">
-      <property name="text">
-       <string/>
-      </property>
-      <property name="checkState">
-       <enum>Checked</enum>
-      </property>
-     </item>
-     <item row="7" column="1">
-      <property name="text">
-       <string/>
-      </property>
-      <property name="checkState">
-       <enum>Checked</enum>
-      </property>
-     </item>
-     <item row="7" column="2">
-      <property name="text">
-       <string>USBCamera</string>
-      </property>
-     </item>
-     <item row="7" column="3">
-      <property name="text">
-       <string>1</string>
-      </property>
-     </item>
-     <item row="7" column="4">
-      <property name="text">
-       <string>USB1</string>
-      </property>
-     </item>
-    </widget>
-    <widget class="QTextEdit" name="textEdit_teamHome">
-     <property name="geometry">
-      <rect>
-       <x>140</x>
-       <y>380</y>
-       <width>181</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="html">
-      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Luckiest Guy'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'.AppleSystemUIFont'; font-size:13pt;&quot;&gt;teamHome&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_teamHome">
-     <property name="geometry">
-      <rect>
-       <x>60</x>
-       <y>390</y>
-       <width>71</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Team Home</string>
-     </property>
-    </widget>
-    <widget class="QTextEdit" name="textEdit_teamAway">
-     <property name="geometry">
-      <rect>
-       <x>140</x>
-       <y>430</y>
-       <width>181</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="html">
-      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Luckiest Guy'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'.AppleSystemUIFont'; font-size:13pt;&quot;&gt;teamAway&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_teamAway">
-     <property name="geometry">
-      <rect>
-       <x>60</x>
-       <y>440</y>
-       <width>71</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Team Away</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton_save_config">
-     <property name="geometry">
-      <rect>
-       <x>610</x>
-       <y>400</y>
-       <width>112</width>
-       <height>32</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>save</string>
-     </property>
-    </widget>
-    <widget class="QTextEdit" name="textEdit_playerA1">
-     <property name="geometry">
-      <rect>
-       <x>340</x>
-       <y>380</y>
-       <width>111</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="html">
-      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Luckiest Guy'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'.AppleSystemUIFont'; font-size:13pt;&quot;&gt;playerA1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-    </widget>
-    <widget class="QTextEdit" name="textEdit_playerA2">
-     <property name="geometry">
-      <rect>
-       <x>470</x>
-       <y>380</y>
-       <width>111</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="html">
-      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Luckiest Guy'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'.AppleSystemUIFont'; font-size:13pt;&quot;&gt;playerA2&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-    </widget>
-    <widget class="QTextEdit" name="textEdit_playerB1">
-     <property name="geometry">
-      <rect>
-       <x>340</x>
-       <y>430</y>
-       <width>111</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="html">
-      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Luckiest Guy'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'.AppleSystemUIFont'; font-size:13pt;&quot;&gt;playerB1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-    </widget>
-    <widget class="QTextEdit" name="textEdit_playerB2">
-     <property name="geometry">
-      <rect>
-       <x>470</x>
-       <y>430</y>
-       <width>111</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="html">
-      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Luckiest Guy'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'.AppleSystemUIFont'; font-size:13pt;&quot;&gt;playerB2&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-    </widget>
-    <widget class="QSpinBox" name="spinBox_game_minutes_setting">
-     <property name="geometry">
-      <rect>
-       <x>140</x>
-       <y>480</y>
-       <width>41</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="value">
-      <number>20</number>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_game_time">
-     <property name="geometry">
-      <rect>
-       <x>60</x>
-       <y>490</y>
-       <width>71</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Game Time</string>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="checkBox_down_back_setting">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>490</y>
-       <width>141</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Down/Back On</string>
-     </property>
-    </widget>
-    <widget class="QTextEdit" name="textEdit_court1_orientation">
-     <property name="geometry">
-      <rect>
-       <x>470</x>
-       <y>480</y>
-       <width>111</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="html">
-      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Luckiest Guy'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'.AppleSystemUIFont'; font-size:13pt;&quot;&gt;east-west&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_court1_orientation">
-     <property name="geometry">
-      <rect>
-       <x>330</x>
-       <y>490</y>
-       <width>131</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Court 1 Orientation:</string>
+      <string>Find Balls</string>
      </property>
     </widget>
    </widget>

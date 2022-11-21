@@ -7,7 +7,7 @@ import os
 import config
 
 # load the trained convolutional neural network
-MODEL = load_model(config.BOCCE_MODEL_PATH)
+BOCCE_CLASSIFIER_MODEL = load_model(config.BOCCE_MODEL_PATH)
 
 P = config.RADIUS_BALL_ROI_PADDING
 
@@ -21,9 +21,9 @@ def preprocess(circle_roi):
     return image
 
 
-def inference(circle_roi):
+def bocce_roi_inference(circle_roi):
     preprocessed_roi = preprocess(circle_roi)
-    (notBocce, bocce) = MODEL.predict(preprocessed_roi)[0]
+    (notBocce, bocce) = BOCCE_CLASSIFIER_MODEL.predict(preprocessed_roi)[0]
     return True if bocce > notBocce else False
 
 
@@ -88,7 +88,7 @@ def extract_circle_contours(circles, frame, radius):
 
         # perform classification
         try:
-            is_bocce = inference(cropped)
+            is_bocce = bocce_roi_inference(cropped)
         except:
             is_bocce = False
 
@@ -113,3 +113,4 @@ def balls_to_disk(balls_dict):
             cv2.imwrite(os.path.join("ball_training", filename), v["roi"])
         except:
             pass
+

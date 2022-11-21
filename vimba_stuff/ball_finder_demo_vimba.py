@@ -1,4 +1,4 @@
-from circles import draw_circles, extract_circle_contours, find_circles, balls_to_disk
+from ball_finding import draw_circles, extract_circle_contours, find_circles, balls_to_disk
 from lib.centroidtracker import CentroidTracker
 from vimba import *
 from imutils.video import FPS
@@ -44,6 +44,7 @@ with Vimba.get_instance() as vimba:
             frame.convert_pixel_format(PixelFormat.Bgra8)
             frame = frame.as_opencv_image()
             frame = cv2.cvtColor(frame, cv2.COLOR_BGRA2BGR)
+            disp_frame = frame.copy()
 
             # extract the court ROI
             y1, y2, x1, x2 = config.LEFT_ROI_SLICE
@@ -56,16 +57,6 @@ with Vimba.get_instance() as vimba:
             # find the pallino ball
             circles_pallino = find_circles(frame.copy(), config.RADIUS_PALLINO, config.RADIUS_PALLINO_TOLERANCE)
             balls_dict_pallino = extract_circle_contours(circles_pallino, frame, config.RADIUS_PALLINO)
-
-            # write the ball ROI to disk IF you need data for classification training
-            # balls_to_disk(balls_dict_bocce)
-            # balls_to_disk(balls_dict_pallino)
-
-            # draw the unclassified circles
-            # ball_circles = [(circles_bocce, config.RADIUS_BOCCE, config.COLOR_GREEN),
-            #                 (circles_pallino, config.RADIUS_PALLINO, config.COLOR_RED)]
-            # disp_frame = draw_circles(ball_circles, frame.copy())
-            disp_frame = frame.copy()
 
             # update the centroid tracker
             bocce_ball_coords = []
