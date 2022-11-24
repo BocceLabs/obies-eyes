@@ -9,6 +9,7 @@ import multiprocessing as mp
 from datetime import datetime
 import os
 from vimba import *
+import config
 
 VIDEO_DIR = os.path.join(".", "videos")
 
@@ -133,6 +134,11 @@ class VimbaCamera(Camera):
         frame = self.cam.get_frame()
         frame.convert_pixel_format(PixelFormat.Bgra8)
         frame = frame.as_opencv_image()
+
+        # extract court ROI
+        y1, y2, x1, x2 = config.LEFT_ROI_SLICE
+        frame = frame[y1:y2, x1:x2]
+
         return frame
 
     def _close_camera(self):

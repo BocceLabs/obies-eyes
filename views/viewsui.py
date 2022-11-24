@@ -15,13 +15,17 @@ from PyQt5.QtCore import QThread, QTimer
 from PyQt5.QtGui import QImage, QPixmap, QColor
 from PyQt5 import QtTest
 from PyQt5.QtWidgets import QTableWidgetItem
-from games.bocce.cv import ballfinder
+from games.bocce.cv.motion_detector import MotionDetector
+from games.bocce.cv.ball_finder import BallFinder
 
 from vimba import *
 
 # bocce imports
 from games.bocce.game import Game
 from games.camera.camera import USBCamera, RTSPCamera, PubSubImageZMQCamera, ImageZMQCamera, VimbaCamera
+
+# config
+import config
 
 class MovieThread(QThread):
     def __init__(self, camera):
@@ -45,7 +49,13 @@ class MainWindow(QtWidgets.QMainWindow):
         # load the ui file which was made with Qt Creator
         uic.loadUi("views/ui/oddball.ui", self)
 
+        # motion detection
+        self.motion = False
+        self.motionDetector = MotionDetector(drawMotionZones=False)
+        self.checkBox_motion_draw.stateChanged.connect(self.motion_box_state_change)
 
+        # ball finding
+        self.ballFinder = BallFinder()
 
         ### court tab ###
         # each of the cameras are set up in the
@@ -108,9 +118,13 @@ class MainWindow(QtWidgets.QMainWindow):
         :return:
         """
         self.movie_thread_cam1.quit()
-        self.movie_thread_cam2.quit()
+        #self.movie_thread_cam2.quit()
 
-
+    def motion_box_state_change(self, state):
+        if state == QtCore.Qt.Checked:
+            self.motionDetector.drawMotionZones = True
+        else:
+            self.motionDetector.drawMotionZones = False
 
     def set_default_img(self):
         frame = cv2.imread('views/ui/oddball.png')
@@ -144,9 +158,9 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         cam = self.get_camera_source()[0]
         frame = cam.get_frame()
-        print(frame.shape)
-        frame = cv2.resize(frame, (800, 600))
-        print(frame.shape)
+
+        #frame = cv2.resize(frame, (800, 600))
+        #print(frame.shape)
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         height, width, channel = frame.shape
         bytesPerLine = 3 * width
@@ -169,6 +183,14 @@ class MainWindow(QtWidgets.QMainWindow):
         QtTest.QTest.qWait(4000)
         self.cam1.cam.BalanceWhiteAuto.set('Off')
 
+    def update_ball_info(self, ballinfo):
+        self.lcdNumber_home_ballsoncourt.display(ballinfo["home"]["balls_on_court"])
+        self.lcdNumber_away_ballsoncourt.display(ballinfo["away"]["balls_on_court"])
+        self.lcdNumber_home_num_in.display(ballinfo["home"]["balls_in"])
+        self.lcdNumber_away_num_in.display(ballinfo["away"]["balls_in"])
+        self.label_closest_ball_dist_home.setText("{:.2f}".format(ballinfo["home"]["closest_ball_dist"]))
+        self.label_closest_ball_dist_away.setText("{:.2f}".format(ballinfo["away"]["closest_ball_dist"]))
+
     def update_movie(self):
         """
         grabs frames from a camera and displays it continuously
@@ -179,6 +201,21 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # swap color channels for Qt GUI default
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+        # resize
+        frame = imutils.resize(frame, width = 600)
+
+        # motion detection
+        frame, self.motion = self.motionDetector.update(frame)
+        if self.motion:
+            self.label_motion.setText("Motion...")
+        else:
+            self.label_motion.setText("")
+
+        # ball finder
+        if not self.motion:
+            frame, ballinfo = self.ballFinder.update(frame)
+            self.update_ball_info(ballinfo)
 
         # paint the label_camera frame area
         height, width, channel = frame.shape

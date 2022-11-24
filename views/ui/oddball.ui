@@ -109,7 +109,7 @@
        <x>30</x>
        <y>110</y>
        <width>801</width>
-       <height>581</height>
+       <height>411</height>
       </rect>
      </property>
      <property name="text">
@@ -335,7 +335,7 @@
         <widget class="QLabel" name="label_motion_label">
          <property name="font">
           <font>
-           <family>Impact</family>
+           <family>Arial Black</family>
            <pointsize>20</pointsize>
           </font>
          </property>
@@ -411,7 +411,7 @@
         <widget class="QLabel" name="label_closesttopallino_label">
          <property name="font">
           <font>
-           <family>Impact</family>
+           <family>Arial Black</family>
            <pointsize>20</pointsize>
           </font>
          </property>
@@ -453,7 +453,7 @@
         <widget class="QLabel" name="label_closest_ball_dist_label">
          <property name="font">
           <font>
-           <family>Impact</family>
+           <family>Arial Black</family>
            <pointsize>20</pointsize>
           </font>
          </property>
@@ -464,6 +464,49 @@
        </item>
        <item row="6" column="1">
         <widget class="QLabel" name="label_motion">
+         <property name="palette">
+          <palette>
+           <active>
+            <colorrole role="WindowText">
+             <brush brushstyle="SolidPattern">
+              <color alpha="255">
+               <red>255</red>
+               <green>85</green>
+               <blue>0</blue>
+              </color>
+             </brush>
+            </colorrole>
+           </active>
+           <inactive>
+            <colorrole role="WindowText">
+             <brush brushstyle="SolidPattern">
+              <color alpha="255">
+               <red>255</red>
+               <green>85</green>
+               <blue>0</blue>
+              </color>
+             </brush>
+            </colorrole>
+           </inactive>
+           <disabled>
+            <colorrole role="WindowText">
+             <brush brushstyle="SolidPattern">
+              <color alpha="255">
+               <red>120</red>
+               <green>120</green>
+               <blue>120</blue>
+              </color>
+             </brush>
+            </colorrole>
+           </disabled>
+          </palette>
+         </property>
+         <property name="font">
+          <font>
+           <family>Arial Black</family>
+           <pointsize>20</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string/>
          </property>
@@ -526,7 +569,7 @@
         <widget class="QLabel" name="label_num_in_label">
          <property name="font">
           <font>
-           <family>Impact</family>
+           <family>Arial Black</family>
            <pointsize>20</pointsize>
           </font>
          </property>
@@ -620,7 +663,7 @@
         <widget class="QLabel" name="label_score">
          <property name="font">
           <font>
-           <family>Impact</family>
+           <family>Arial Black</family>
            <pointsize>20</pointsize>
           </font>
          </property>
@@ -633,7 +676,7 @@
         <widget class="QLabel" name="label_status_ballsoncourt_label">
          <property name="font">
           <font>
-           <family>Impact</family>
+           <family>Arial Black</family>
            <pointsize>20</pointsize>
           </font>
          </property>
@@ -655,6 +698,19 @@
          </property>
         </widget>
        </item>
+       <item row="6" column="2">
+        <widget class="QCheckBox" name="checkBox_motion_draw">
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>draw</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </widget>
@@ -666,6 +722,11 @@
        <width>151</width>
        <height>51</height>
       </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Arial Black</family>
+      </font>
      </property>
      <property name="text">
       <string>Find Balls</string>
@@ -679,6 +740,11 @@
        <width>151</width>
        <height>51</height>
       </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Arial Black</family>
+      </font>
      </property>
      <property name="text">
       <string>Adjust Picture</string>
