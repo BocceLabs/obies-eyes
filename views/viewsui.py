@@ -13,8 +13,11 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5 import uic
 from PyQt5.QtCore import QThread, QTimer
 from PyQt5.QtGui import QImage, QPixmap, QColor
+from PyQt5 import QtTest
 from PyQt5.QtWidgets import QTableWidgetItem
 from games.bocce.cv import ballfinder
+
+from vimba import *
 
 # bocce imports
 from games.bocce.game import Game
@@ -52,11 +55,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.cam1, self.movie_thread_cam1 = None, None
         self.cam2, self.movie_thread_cam2 = None, None
 
-        self.cam1 = VimbaCamera(name="DEV_000F315DAB70", source="DEV_000F315DAB70", flip=False)
-        self.cam1.initialize()
+        VIMBA = Vimba.get_instance()
+        VIMBA._startup()
 
-        self.cam2 = VimbaCamera(name="DEV_000F315DAB39", source="DEV_000F315DAB39", flip=False)
-        self.cam2.initialize()
+        self.cam1 = VimbaCamera(name="DEV_000F315DAB70", source="DEV_000F315DAB70", flip=False)
+        self.cam1._initialize(VIMBA)
+
+        # self.cam2 = VimbaCamera(name="DEV_000F315DAB39", source="DEV_000F315DAB39", flip=False)
+        # self.cam2._initialize(VIMBA)
 
         # movie timer
         self.movie_thread = None
@@ -72,15 +78,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self.time_sec_left = 0
         self.game_time_ui_update()
 
+        self.pushButton_adjust_picture.clicked.connect(self.adjust_picture)
+
         # minimal game info
         self.teamHome_name = ""
         self.teamAway_name = ""
 
         # camera source radio buttons
-        self.radioButton_cam1.clicked.connect(self.get_camera_source)
-        self.radioButton_cam2.clicked.connect(self.get_camera_source)
+        #self.radioButton_cam1.clicked.connect(self.get_camera_source)
+        #self.radioButton_cam2.clicked.connect(self.get_camera_source)
 
         # set the no camera image
+        # self.label_camera.setScaledContents(True)
         self.set_default_img()
 
         # scoring
@@ -135,6 +144,9 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         cam = self.get_camera_source()[0]
         frame = cam.get_frame()
+        print(frame.shape)
+        frame = cv2.resize(frame, (800, 600))
+        print(frame.shape)
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         height, width, channel = frame.shape
         bytesPerLine = 3 * width
@@ -142,6 +154,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_camera.setPixmap(QPixmap(qImg))
         self.label_camera.repaint()
         return frame
+
+    def adjust_picture(self):
+        # settings
+        self.cam1.cam.ExposureAuto.set('Once')
+        QtTest.QTest.qWait(4000)
+        self.cam1.cam.ExposureAuto.set('Off')
+
+        self.cam1.cam.GainAuto.set('Once')
+        QtTest.QTest.qWait(4000)
+        self.cam1.cam.GainAuto.set('Off')
+
+        self.cam1.cam.BalanceWhiteAuto.set('Once')
+        QtTest.QTest.qWait(4000)
+        self.cam1.cam.BalanceWhiteAuto.set('Off')
 
     def update_movie(self):
         """
@@ -170,8 +196,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.movie_thread_cam1 = MovieThread(self.cam1)
         self.movie_thread_cam1.start()
 
-        self.movie_thread_cam2 = MovieThread(self.cam1)
-        self.movie_thread_cam2.start()
+        # self.movie_thread_cam2 = MovieThread(self.cam1)
+        # self.movie_thread_cam2.start()
 
         self.movie_thread_timer.start(30)
 
@@ -221,8 +247,9 @@ class MainWindow(QtWidgets.QMainWindow):
         this method updates the time indicator on the GUI
         :return:
         """
-        self.lcdNumber_game_time_remaining_min.display(str(self.time_min_left).zfill(2))
-        self.lcdNumber_game_time_remaining_sec.display(str(self.time_sec_left).zfill(2))
+        pass
+        #self.lcdNumber_game_time_remaining_min.display(str(self.time_min_left).zfill(2))
+        #self.lcdNumber_game_time_remaining_sec.display(str(self.time_sec_left).zfill(2))
 
 
 

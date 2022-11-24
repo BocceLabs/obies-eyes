@@ -14,6 +14,9 @@ VIDEO_DIR = os.path.join(".", "videos")
 
 MAX_RECORDING_RESTARTS = 8
 
+
+
+
 class Camera:
     def __init__(self, name=None, source=None, flip=False, *args, **kwargs):
         self.name = name
@@ -28,7 +31,7 @@ class Camera:
         self.recordingStartTime = time.time()
         self.restartCount = 0
 
-        self.teams = "None-vs-None"
+
 
     def initialize(self):
         pass
@@ -50,8 +53,8 @@ class Camera:
                 self.get_frame()
 
             # if grabbing a frame was unsuccessful, try again
-            except:
-                print("\n\nEXCEPTION while trying to grab frame; passing.\n\n")
+            except Exception as e:
+                print(str(e))
                 pass
                 # if self.recording and not self.writer is None:
                     # print("\n\nEXCEPTION while trying to grab frame; stopping recording, "
@@ -101,9 +104,6 @@ class Camera:
             self.writer = None
         # self.recordingStartTime = None
 
-    def set_teams(self, teamHome, teamAway):
-        self.teams = teamHome + "-vs-" + teamAway
-
     def __str__(self):
         return "{}: {}".format(self.__class__.__name__, self.name, self.source)
 
@@ -124,19 +124,19 @@ class VimbaCamera(Camera):
         self.source = source
         self.cam = None
 
-    def initialize(self):
+    def _initialize(self, VIMBA):
+        self.cam = VIMBA.get_camera_by_id(self.source)
+        self.cam._open()
         self.get_frame()
 
     def _get_frame(self):
+        frame = self.cam.get_frame()
+        frame.convert_pixel_format(PixelFormat.Bgra8)
+        frame = frame.as_opencv_image()
+        return frame
 
-        with Vimba.get_instance() as vimba:
-            self.cam = vimba.get_camera_by_id(self.source)
-
-            with self.cam:
-                frame = self.cam.get_frame()
-                frame.convert_pixel_format(PixelFormat.Bgra8)
-                frame = frame.as_opencv_image()
-                return frame
+    def _close_camera(self):
+        self.cam.close()
 
 
 class USBCamera(Camera):
