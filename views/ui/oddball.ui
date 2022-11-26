@@ -199,7 +199,7 @@
        <property name="sizeConstraint">
         <enum>QLayout::SetDefaultConstraint</enum>
        </property>
-       <item row="5" column="2">
+       <item row="6" column="2">
         <widget class="QLCDNumber" name="lcdNumber_away_num_in">
          <property name="font">
           <font>
@@ -220,9 +220,9 @@
             <colorrole role="WindowText">
              <brush brushstyle="SolidPattern">
               <color alpha="255">
-               <red>85</red>
-               <green>0</green>
-               <blue>255</blue>
+               <red>223</red>
+               <green>223</green>
+               <blue>0</blue>
               </color>
              </brush>
             </colorrole>
@@ -249,9 +249,9 @@
             <colorrole role="WindowText">
              <brush brushstyle="SolidPattern">
               <color alpha="255">
-               <red>85</red>
-               <green>0</green>
-               <blue>255</blue>
+               <red>223</red>
+               <green>223</green>
+               <blue>0</blue>
               </color>
              </brush>
             </colorrole>
@@ -331,7 +331,7 @@
          </property>
         </widget>
        </item>
-       <item row="6" column="0">
+       <item row="7" column="0">
         <widget class="QLabel" name="label_motion_label">
          <property name="font">
           <font>
@@ -344,7 +344,7 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="1">
+       <item row="6" column="1">
         <widget class="QLCDNumber" name="lcdNumber_home_num_in">
          <property name="font">
           <font>
@@ -371,9 +371,9 @@
             <colorrole role="WindowText">
              <brush brushstyle="SolidPattern">
               <color alpha="255">
-               <red>229</red>
-               <green>229</green>
-               <blue>0</blue>
+               <red>85</red>
+               <green>0</green>
+               <blue>255</blue>
               </color>
              </brush>
             </colorrole>
@@ -382,9 +382,9 @@
             <colorrole role="WindowText">
              <brush brushstyle="SolidPattern">
               <color alpha="255">
-               <red>229</red>
-               <green>229</green>
-               <blue>0</blue>
+               <red>85</red>
+               <green>0</green>
+               <blue>255</blue>
               </color>
              </brush>
             </colorrole>
@@ -404,6 +404,19 @@
          </property>
          <property name="digitCount">
           <number>2</number>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="2">
+        <widget class="QCheckBox" name="checkBox_motion_draw">
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>draw</string>
          </property>
         </widget>
        </item>
@@ -433,8 +446,21 @@
          </property>
         </widget>
        </item>
+       <item row="2" column="1">
+        <widget class="QLCDNumber" name="lcdNumber_home_ballsoncourt">
+         <property name="font">
+          <font>
+           <family>Luckiest Guy</family>
+           <pointsize>8</pointsize>
+          </font>
+         </property>
+         <property name="digitCount">
+          <number>1</number>
+         </property>
+        </widget>
+       </item>
        <item row="4" column="1">
-        <widget class="QLabel" name="label_closest_ball_dist_home">
+        <widget class="QLabel" name="label_closest_ball_dist_pixels_home">
          <property name="font">
           <font>
            <family>Courier New</family>
@@ -450,7 +476,7 @@
         </widget>
        </item>
        <item row="4" column="0">
-        <widget class="QLabel" name="label_closest_ball_dist_label">
+        <widget class="QLabel" name="label_closest_ball_dist_pixels_label">
          <property name="font">
           <font>
            <family>Arial Black</family>
@@ -458,11 +484,11 @@
           </font>
          </property>
          <property name="text">
-          <string>Closest Ball Dist</string>
+          <string>Closest (pixels)</string>
          </property>
         </widget>
        </item>
-       <item row="6" column="1">
+       <item row="7" column="1">
         <widget class="QLabel" name="label_motion">
          <property name="palette">
           <palette>
@@ -529,9 +555,9 @@
             <colorrole role="WindowText">
              <brush brushstyle="SolidPattern">
               <color alpha="255">
-               <red>85</red>
-               <green>0</green>
-               <blue>255</blue>
+               <red>223</red>
+               <green>223</green>
+               <blue>0</blue>
               </color>
              </brush>
             </colorrole>
@@ -540,9 +566,9 @@
             <colorrole role="WindowText">
              <brush brushstyle="SolidPattern">
               <color alpha="255">
-               <red>85</red>
-               <green>0</green>
-               <blue>255</blue>
+               <red>223</red>
+               <green>223</green>
+               <blue>0</blue>
               </color>
              </brush>
             </colorrole>
@@ -565,7 +591,7 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="0">
+       <item row="6" column="0">
         <widget class="QLabel" name="label_num_in_label">
          <property name="font">
           <font>
@@ -586,9 +612,9 @@
             <colorrole role="WindowText">
              <brush brushstyle="SolidPattern">
               <color alpha="255">
-               <red>229</red>
-               <green>229</green>
-               <blue>0</blue>
+               <red>85</red>
+               <green>0</green>
+               <blue>255</blue>
               </color>
              </brush>
             </colorrole>
@@ -597,9 +623,9 @@
             <colorrole role="WindowText">
              <brush brushstyle="SolidPattern">
               <color alpha="255">
-               <red>229</red>
-               <green>229</green>
-               <blue>0</blue>
+               <red>85</red>
+               <green>0</green>
+               <blue>255</blue>
               </color>
              </brush>
             </colorrole>
@@ -634,7 +660,7 @@
         </widget>
        </item>
        <item row="4" column="2">
-        <widget class="QLabel" name="label_closest_ball_dist_away">
+        <widget class="QLabel" name="label_closest_ball_dist_pixels_away">
          <property name="font">
           <font>
            <family>Courier New</family>
@@ -685,29 +711,48 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
-        <widget class="QLCDNumber" name="lcdNumber_home_ballsoncourt">
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_closest_ball_dist_inches_label">
          <property name="font">
           <font>
-           <family>Luckiest Guy</family>
-           <pointsize>8</pointsize>
-          </font>
-         </property>
-         <property name="digitCount">
-          <number>1</number>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="2">
-        <widget class="QCheckBox" name="checkBox_motion_draw">
-         <property name="font">
-          <font>
-           <family>Arial</family>
-           <pointsize>10</pointsize>
+           <family>Arial Black</family>
+           <pointsize>20</pointsize>
           </font>
          </property>
          <property name="text">
-          <string>draw</string>
+          <string>Closest (inches)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QLabel" name="label_closest_ball_dist_inches_home">
+         <property name="font">
+          <font>
+           <family>Courier New</family>
+           <pointsize>20</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>0.0</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="2">
+        <widget class="QLabel" name="label_closest_ball_dist_inches_away">
+         <property name="font">
+          <font>
+           <family>Courier New</family>
+           <pointsize>20</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>0.0</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
          </property>
         </widget>
        </item>

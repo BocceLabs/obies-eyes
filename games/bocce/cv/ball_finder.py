@@ -1,9 +1,10 @@
 from games.bocce.cv.pyimagesearch.centroidtracker import CentroidTracker
 from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.models import load_model
+from collections import OrderedDict
 import numpy as np
 import config
-import time
+import math
 import uuid
 import cv2
 import os
@@ -18,6 +19,8 @@ class BallFinder:
         self.bocce_ct = CentroidTracker()
         self.pallino_ct = CentroidTracker()
         self.bocce_queues = {}
+        self.bocces = OrderedDict()
+        self.pallinos = OrderedDict()
 
     def update(self, frame):
         # initialize ball info dict
@@ -25,17 +28,20 @@ class BallFinder:
             "home": {
                 "balls_on_court": 0,
                 "balls_in": 0,
-                "closest_ball_dist": 0
+                "closest_ball_dist_inches": 0,
+                "closest_ball_dist_pixels": 0
             },
             "away": {
                 "balls_on_court": 0,
                 "balls_in": 0,
-                "closest_ball_dist": 0
+                "closest_ball_dist_inches": 0,
+                "closest_ball_dist_pixels": 0
             }
         }
 
         # find the bocce balls
         circles_bocce = find_circles(frame.copy(), config.RADIUS_BOCCE, config.RADIUS_BOCCE_TOLERANCE)
+        #frame = draw_circles((circles_bocce, config.RADIUS_BOCCE, config.COLOR_WHITE), frame)
         balls_dict_bocce = extract_circle_contours(circles_bocce, frame, config.RADIUS_BOCCE)
 
         # find the pallino ball
@@ -50,11 +56,13 @@ class BallFinder:
             bocce_ball_coords.append(v['coord'])
         for b, v in balls_dict_pallino.items():
             pallino_ball_coords.append(v['coord'])
-        bocces = self.bocce_ct.update(bocce_ball_coords)
-        pallinos = self.pallino_ct.update(pallino_ball_coords)
+        self.bocces = self.bocce_ct.update(bocce_ball_coords)
+        self.pallinos = self.pallino_ct.update(pallino_ball_coords)
+
+        print(list(self.bocces.keys()))
 
         # stabilization
-        for (objectID, centroid) in bocces.items():
+        for (objectID, centroid) in self.bocces.items():
             # populate the centroid queues
             if objectID not in self.bocce_queues.keys():
                 self.bocce_queues[objectID] = {}
@@ -69,39 +77,60 @@ class BallFinder:
             # calculate the centroid average of each queue
             self.bocce_queues[objectID]["center"] = centroid_of_centroids(self.bocce_queues[objectID]["history"])
 
-        # display
-        for (objectID, centroid_info) in self.bocce_queues.items():
-            if objectID not in bocces.keys():
-                continue
+        # delete queues we no-longer need
+        to_del = []
+        for objectID in self.bocce_queues.keys():
+            if objectID not in self.bocces.keys():
+                to_del.append(objectID)
+        for objectID in to_del:
+            del self.bocce_queues[objectID]
 
+        # grab the shortest distance
+        px, inches = shortest_distance(self.bocce_queues, self.bocces, self.pallinos)
+        ballinfo["home"]["closest_ball_dist_pixels"] = px
+        ballinfo["home"]["closest_ball_dist_inches"] = inches
+
+        # display
+        ballinfo["home"]["balls_on_court"] = len(self.bocce_queues.keys())
+        for (objectID, centroid_info) in self.bocce_queues.items():
             # extract the center
             center = centroid_info["center"]
             if center is None:
                 continue
 
             # draw a line to the pallino
-            for (objectID, pallino_centroid) in pallinos.items():
+            for _, pallino_centroid in self.pallinos.items():
                 cv2.line(frame, (int(pallino_centroid[0]), int(pallino_centroid[1])),
                          (center[0], center[1]),
                          config.COLOR_WHITE, 1)
 
-            # draw both the ID of the object and the centroid of the
-            # object on the output frame
-            text = "{}".format(objectID)
-            cv2.putText(frame, text, (center[0] - 5, center[1] + 5),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.8, config.COLOR_BOCCE_BALL_TEXT, 1)
+            # draw  the ID of the object on the output frame
+            cv2.circle(frame, (center[0], center[1]), int(config.RADIUS_BOCCE/1.5), config.COLOR_GREEN, -1)
+            cv2.putText(frame, str(objectID), (center[0] - 6, center[1] + 6),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.8, config.COLOR_BOCCE_BALL_TEXT, 2)
 
-        for (objectID, centroid) in pallinos.items():
-            # draw both the ID of the object and the centroid of the
-            # object on the output frame
-            text = "{}".format(objectID)
-            cv2.putText(frame, text, (int(centroid[0] - 5), int(centroid[1] + 5)),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.4, config.COLOR_BOCCE_BALL_TEXT, 1)
+
+        # for (objectID, centroid) in self.pallinos.items():
+        #     # draw the ID of the object on the ball
+        #     cv2.putText(frame, str(objectID), (int(centroid[0] - 5), int(centroid[1] + 5)),
+        #                 cv2.FONT_HERSHEY_SIMPLEX, 0.4, config.COLOR_BOCCE_BALL_TEXT, 1)
 
         return frame, ballinfo
 
 
+def shortest_distance(bocce_queues, bocces, pallinos):
+    distances = []
+    for (objectID, bocce) in bocce_queues.items():
+        if objectID not in bocces.keys():
+            continue
+        for (objectID, pallino_centroid) in pallinos.items():
 
+            d = math.dist(pallino_centroid, bocce["center"])
+            distances.append(d)
+
+    if len(distances) == 0:
+        return 0, 0
+    return min(distances), min(distances)/config.PIXELS_PER_INCH
 
 
 def preprocess(circle_roi):
@@ -121,6 +150,8 @@ def bocce_roi_inference(circle_roi):
 
 def find_circles(frame, radius, radius_tolerance):
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    gray = cv2.GaussianBlur(gray, (27, 27), 0)
+
     circles = cv2.HoughCircles(gray,
                                method=cv2.HOUGH_GRADIENT,
                                dp=1.2,
@@ -144,7 +175,7 @@ def draw_circles(ball_circle, frame):
         for (x, y, r) in circles:
             # draw the circle in the output image, then draw a rectangle
             # corresponding to the center of the circle
-            cv2.circle(frame, (x, y), radius, color, 2)
+            cv2.circle(frame, (x, y), radius, color, 4)
 
     return frame
 

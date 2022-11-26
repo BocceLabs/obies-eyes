@@ -188,8 +188,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.lcdNumber_away_ballsoncourt.display(ballinfo["away"]["balls_on_court"])
         self.lcdNumber_home_num_in.display(ballinfo["home"]["balls_in"])
         self.lcdNumber_away_num_in.display(ballinfo["away"]["balls_in"])
-        self.label_closest_ball_dist_home.setText("{:.2f}".format(ballinfo["home"]["closest_ball_dist"]))
-        self.label_closest_ball_dist_away.setText("{:.2f}".format(ballinfo["away"]["closest_ball_dist"]))
+        self.label_closest_ball_dist_pixels_home.setText("{:.2f}".format(ballinfo["home"]["closest_ball_dist_pixels"]))
+        self.label_closest_ball_dist_pixels_away.setText("{:.2f}".format(ballinfo["away"]["closest_ball_dist_pixels"]))
+        self.label_closest_ball_dist_inches_home.setText("{:.2f}".format(ballinfo["home"]["closest_ball_dist_inches"]))
+        self.label_closest_ball_dist_inches_away.setText("{:.2f}".format(ballinfo["away"]["closest_ball_dist_inches"]))
 
     def update_movie(self):
         """
@@ -201,9 +203,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # swap color channels for Qt GUI default
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-
-        # resize
-        frame = imutils.resize(frame, width = 600)
 
         # motion detection
         frame, self.motion = self.motionDetector.update(frame)
