@@ -1,13 +1,17 @@
 from games.bocce.cv.pyimagesearch.centroidtracker import CentroidTracker
+from games.bocce.cv.pyimagesearch.descriptors.histogram import Histogram
 from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.models import load_model
 from collections import OrderedDict
+from sklearn.cluster import KMeans
 import numpy as np
 import config
 import math
 import uuid
 import cv2
 import os
+
+from pprint import pprint
 
 # load the trained convolutional neural network
 BOCCE_CLASSIFIER_MODEL = load_model(config.BOCCE_MODEL_PATH)
@@ -42,12 +46,12 @@ class BallFinder:
         # find the bocce balls
         circles_bocce = find_circles(frame.copy(), config.RADIUS_BOCCE, config.RADIUS_BOCCE_TOLERANCE)
         #frame = draw_circles((circles_bocce, config.RADIUS_BOCCE, config.COLOR_WHITE), frame)
-        balls_dict_bocce = extract_circle_contours(circles_bocce, frame, config.RADIUS_BOCCE)
+        balls_dict_bocce = circles_to_ball_info(circles_bocce, frame, config.RADIUS_BOCCE)
 
         # find the pallino ball
         circles_pallino = find_circles(frame.copy(), config.RADIUS_PALLINO, config.RADIUS_PALLINO_TOLERANCE)
         #frame = draw_circles((circles_pallino, config.RADIUS_PALLINO, config.COLOR_RED), frame)
-        balls_dict_pallino = extract_circle_contours(circles_pallino, frame, config.RADIUS_PALLINO)
+        balls_dict_pallino = circles_to_ball_info(circles_pallino, frame, config.RADIUS_PALLINO)
 
         # update the centroid tracker
         bocce_ball_coords = []
@@ -58,8 +62,6 @@ class BallFinder:
             pallino_ball_coords.append(v['coord'])
         self.bocces = self.bocce_ct.update(bocce_ball_coords)
         self.pallinos = self.pallino_ct.update(pallino_ball_coords)
-
-        print(list(self.bocces.keys()))
 
         # stabilization
         for (objectID, centroid) in self.bocces.items():
@@ -180,7 +182,7 @@ def draw_circles(ball_circle, frame):
     return frame
 
 
-def extract_circle_contours(circles, frame, radius):
+def circles_to_ball_info(circles, frame, radius):
     balls = {}
 
     if circles is None or len(circles) == 0:
@@ -219,11 +221,15 @@ def extract_circle_contours(circles, frame, radius):
             balls[i] = {
                 "coord": (x, y),
                 "roi": cropped,
-                "roi_mask": masked_cropped
+                "roi_mask": masked_cropped,
+                "cluster": None
             }
 
         else:
             continue
+
+    # determine the cluster (team) for all balls
+    balls = cluster_balls(balls)
 
     return balls
 
@@ -242,3 +248,36 @@ def balls_to_disk(balls_dict):
         except:
             pass
 
+
+def cluster_balls(balls, clusters=2):
+    # initialize the image descriptor along with the image matrix
+    desc = Histogram([8, 8, 8], cv2.COLOR_BGR2LAB)
+    data = []
+    ball_idxs = []
+
+    # loop over the input dataset of images
+    for ball_idx, ball in balls.items():
+        # grab the circular roi mask
+        roi_mask = ball["roi_mask"]
+
+        # load the image, describe the image, then update the list of data
+        hist = desc.describe(roi_mask)
+        data.append(hist)
+        ball_idxs.append(ball_idx)
+
+    # ensure we have enough data
+    if len(data) < 2:
+        return balls
+
+    # cluster the color histograms
+    clt = KMeans(n_clusters=clusters, random_state=42)
+    labels = clt.fit_predict(data)
+
+    # loop over the unique labels
+    for label in np.unique(labels):
+        # grab all image paths that are assigned to the current label
+        indices = np.where(np.array(labels, copy=False) == label)[0].tolist()
+        for idx in indices:
+            balls[ball_idxs[idx]]["cluster"] = label
+
+    return balls
