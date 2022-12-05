@@ -3,7 +3,7 @@ import os
 RADIUS_BOCCE = 24  # 26 is for regulation with this resolution at this distance from the court
 RADIUS_PALLINO = 8
 
-RADIUS_BOCCE_TOLERANCE = 4
+RADIUS_BOCCE_TOLERANCE = 6 # 4 is best, 6 accomodates large and small balls
 RADIUS_PALLINO_TOLERANCE = 2
 
 RADIUS_BALL_ROI_PADDING = 4

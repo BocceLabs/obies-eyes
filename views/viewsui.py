@@ -193,6 +193,17 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_closest_ball_dist_inches_home.setText("{:.2f}".format(ballinfo["home"]["closest_ball_dist_inches"]))
         self.label_closest_ball_dist_inches_away.setText("{:.2f}".format(ballinfo["away"]["closest_ball_dist_inches"]))
 
+        if ballinfo["home"]["closest_ball_dist_pixels"] < ballinfo["away"]["closest_ball_dist_pixels"]:
+            self.label_home_closesttopallino_check.setText("✅")
+            self.label_away_closesttopallino_check.setText("")
+        elif ballinfo["home"]["closest_ball_dist_pixels"] > ballinfo["away"]["closest_ball_dist_pixels"]:
+            self.label_away_closesttopallino_check.setText("✅")
+            self.label_home_closesttopallino_check.setText("")
+        else:
+            self.label_home_closesttopallino_check.setText("")
+            self.label_away_closesttopallino_check.setText("")
+
+
     def update_movie(self):
         """
         grabs frames from a camera and displays it continuously

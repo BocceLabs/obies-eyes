@@ -11,8 +11,8 @@ class Histogram:
 	def describe(self, image, mask=None):
 		# convert the image to the L*a*b* color space, compute a histogram,
 		# and normalize it
-		img = cv2.cvtColor(image, self.colorspace)
-		hist = cv2.calcHist([img], [0, 1, 2], mask, self.bins,
+		image = cv2.cvtColor(image, self.colorspace)
+		hist = cv2.calcHist([image], [0, 1, 2], mask, self.bins,
 			[0, 256, 0, 256, 0, 256])
 
 		# handle if we are calculating the histogram for OpenCV 2.4
